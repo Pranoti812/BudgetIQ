@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
+
 class AIAssistantScreen extends StatefulWidget {
   const AIAssistantScreen({super.key});
 

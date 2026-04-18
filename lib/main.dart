@@ -8,7 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Safe initialization (prevents duplicate-app error)
+  //initialization
   try {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -36,6 +36,6 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(debugShowCheckedModeBanner: false,
-     home:  DashboardScreen());
+    home:  DashboardScreen());
   }
 }

@@ -1,6 +1,7 @@
-import 'package:budegt_iq/view/a_screen.dart';
+import 'package:budegt_iq/view/dashboard_screen.dart';
 import 'package:budegt_iq/view/gov_bottm_nav.dart';
-import 'package:budegt_iq/view/set_screen.dart';
+import 'package:budegt_iq/view/region.dart';
+import 'package:budegt_iq/view/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -64,43 +65,47 @@ class _SimulationScreenState extends State<SimulationScreen> {
     });
   }
 
-  /// 🔥 FIXED NAVIGATION (NO ROUTES)
-  void _onNavTap(int index) {
-    setState(() => currentIndex = index);
+  /// 🔁 NAVIGATION
+void _onNavTap(int index) {
+  if (index == currentIndex) return; // prevent reload
 
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
-        );
-        break;
+  switch (index) {
+    case 0:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+      );
+      break;
 
-      case 1:
-        break;
+    case 1:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const SimulationScreen()),
+      );
+      break;
 
-      case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const AIScreen()),
-        );
-        break;
+    // case 2:
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (_) => const AIInsightsScreen()),
+    //   );
+    //   break;
 
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const RegionScreen()),
-        );
-        break;
+    case 3:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MyApp()),
+      );
+      break;
 
-      case 4:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const SettingsScreen()),
-        );
-        break;
-    }
+    case 4:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DataIntegrationScreen()),
+      );
+      break;
   }
+}
 
   void updateValue(VoidCallback update) {
     setState(update);

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:budegt_iq/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 
@@ -30,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen>
     Timer(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => CitizenHomeScreen()),
+        MaterialPageRoute(builder: (context) => LoginScreen()),
       );
     });
   }
@@ -56,12 +57,7 @@ class _SplashScreenState extends State<SplashScreen>
           //   19,
           //   32,
           // ),
-          color: Color.fromARGB(
-            255,
-            11,
-            26,
-            45,
-          ), // deep navy (matches your logo bg)
+          color: Colors.white // deep navy (matches your logo bg)
         ),
 
         child: FadeTransition(
