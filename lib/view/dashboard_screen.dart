@@ -264,22 +264,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   /// BOTTOM NAV
   Widget _buildBottomNav() {
-    return BottomNavigationBar(
-      currentIndex: _currentIndex,
-      onTap: _onNavTap,
-      backgroundColor: const Color(0xFF0B1A33),
-      selectedItemColor: Colors.purple,
-      unselectedItemColor: Colors.white54,
-      type: BottomNavigationBarType.fixed,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dashboard"),
-        BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: "Simulation"),
-        BottomNavigationBarItem(icon: Icon(Icons.lightbulb), label: "AI Insights"),
-        BottomNavigationBarItem(icon: Icon(Icons.location_on), label: "Regions"),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
-      ],
-    );
-  }
+  return BottomNavigationBar(
+    currentIndex: _currentIndex,
+    backgroundColor: const Color(0xFF0B1A33),
+    selectedItemColor: Colors.purple,
+    unselectedItemColor: Colors.white54,
+    type: BottomNavigationBarType.fixed,
+
+    /// 🔥 NAVIGATION LOGIC HERE
+    onTap: (index) {
+      setState(() => _currentIndex = index);
+
+      switch (index) {
+        case 0:
+          // Already on Dashboard
+          break;
+
+        case 1:
+          Navigator.pushNamed(context, '/simulation');
+          break;
+
+        case 2:
+          Navigator.pushNamed(context, '/ai');
+          break;
+
+        case 3:
+          Navigator.pushNamed(context, '/regions');
+          break;
+
+        case 4:
+          Navigator.pushNamed(context, '/settings');
+          break;
+      }
+    },
+
+    items: const [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.dashboard),
+        label: "Dashboard",
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.show_chart),
+        label: "Simulation",
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.lightbulb),
+        label: "AI Insights",
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.location_on),
+        label: "Regions",
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.settings),
+        label: "Settings",
+      ),
+    ],
+  );
+}
 
   BoxDecoration _cardDecoration() {
     return BoxDecoration(
