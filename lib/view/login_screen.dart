@@ -1,4 +1,4 @@
-import 'dart:developer';
+//import 'dart:developer';
 
 import 'package:budegt_iq/controller/auth_controller.dart';
 import 'package:budegt_iq/controller/user_controller.dart';
@@ -49,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
               // 🔹 TOGGLE BUTTON
               Container(
                 height: 45,
@@ -127,10 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 5),
               Text(
                 'Sign in to continue',
-                style: GoogleFonts.poppins(
-                  color: Colors.white54,
-                  fontSize: 13,
-                ),
+                style: GoogleFonts.poppins(color: Colors.white54, fontSize: 13),
               ),
 
               const SizedBox(height: 25),
@@ -142,8 +138,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: InputDecoration(
                   hintText: 'Enter Email',
                   hintStyle: const TextStyle(color: Colors.white38),
-                  prefixIcon:
-                      const Icon(Icons.email_outlined, color: Colors.white70),
+                  prefixIcon: const Icon(
+                    Icons.email_outlined,
+                    color: Colors.white70,
+                  ),
                   filled: true,
                   fillColor: const Color(0xFF1E2E4F),
                   border: OutlineInputBorder(
@@ -163,10 +161,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: InputDecoration(
                   hintText: 'Enter Password',
                   hintStyle: const TextStyle(color: Colors.white38),
-                  prefixIcon:
-                      const Icon(Icons.lock_outline, color: Colors.white70),
-                  suffixIcon:
-                      const Icon(Icons.visibility_outlined, color: Colors.white70),
+                  prefixIcon: const Icon(
+                    Icons.lock_outline,
+                    color: Colors.white70,
+                  ),
+                  suffixIcon: const Icon(
+                    Icons.visibility_outlined,
+                    color: Colors.white70,
+                  ),
                   filled: true,
                   fillColor: const Color(0xFF1E2E4F),
                   border: OutlineInputBorder(
@@ -195,9 +197,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => RegisterScreen()),
-                    );
+                    Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (_) => RegisterScreen()));
                   },
                   child: Text(
                     'Register',
@@ -217,10 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 50,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF8A3FFC),
-                      Color(0xFF6A5AE0),
-                    ],
+                    colors: [Color(0xFF8A3FFC), Color(0xFF6A5AE0)],
                   ),
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
@@ -237,8 +236,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (emailController.text.trim().isEmpty ||
                           passwordController.text.trim().isEmpty) {
                         CustomSnackbar().showCustomSnackbar(
-                            context, 'Enter valid data',
-                            bgColor: Colors.red);
+                          context,
+                          'Enter valid data',
+                          bgColor: Colors.red,
+                        );
                         return;
                       }
 
@@ -246,15 +247,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       try {
                         await authController.login(
-                            emailController.text.trim(),
-                            passwordController.text.trim(),
-                            context);
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
+                          context,
+                        );
 
                         String email = emailController.text.trim();
                         String pass = passwordController.text.trim();
 
-                        if (email == 'admin@gmail.com' &&
-                            pass == '123456') {
+                        if (email == 'admin@gmail.com' && pass == '123456') {
                           Map<String, dynamic> data = {
                             'email': email,
                             'password': pass,
@@ -290,8 +291,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       } on FirebaseAuthException catch (_) {
                         final pendingSnap = await FirebaseFirestore.instance
                             .collection('pending_requests')
-                            .where('email',
-                                isEqualTo: emailController.text.trim())
+                            .where(
+                              'email',
+                              isEqualTo: emailController.text.trim(),
+                            )
                             .limit(1)
                             .get();
 
@@ -354,10 +357,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               Text(
                 'Or continue with',
-                style: GoogleFonts.poppins(
-                  color: Colors.white38,
-                  fontSize: 13,
-                ),
+                style: GoogleFonts.poppins(color: Colors.white38, fontSize: 13),
               ),
 
               const SizedBox(height: 15),
