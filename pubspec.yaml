@@ -13,7 +13,6 @@ dependencies:
   flutter_tts: ^4.2.5
   http: ^1.6.0
   fl_chart: ^0.68.0
-  google_fonts: ^8.0.2
   intl: ^0.20.2
   shared_preferences: ^2.5.5
   speech_to_text: ^7.3.0
@@ -21,6 +20,7 @@ dependencies:
   firebase_auth: ^6.4.0
   google_generative_ai: ^0.4.7
   google_sign_in: 6.1.6
+  google_fonts: ^8.0.2
 
 dev_dependencies:
   flutter_test:

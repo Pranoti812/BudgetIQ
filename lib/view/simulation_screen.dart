@@ -6,6 +6,10 @@ import 'package:budegt_iq/view/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+// 🔥 IMPORT SCREENS
+import 'dashboard_screen.dart';
+import 'region_screen.dart';
+
 class SimulationScreen extends StatefulWidget {
   const SimulationScreen({super.key});
 
@@ -26,7 +30,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
   @override
   void initState() {
     super.initState();
-    generateProjection(); // ✅ initial graph
+    generateProjection();
   }
 
   /// 🔥 SIMULATION LOGIC
@@ -38,7 +42,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
     double baseSatisfaction = 70;
 
     for (int i = 0; i < 5; i++) {
-      double year = (2024 + i).toDouble(); // ✅ FIXED
+      double year = (2024 + i).toDouble();
 
       double g = baseGrowth +
           (healthcare * 0.25) +
@@ -52,8 +56,8 @@ class _SimulationScreenState extends State<SimulationScreen> {
           (agriculture * 0.25) +
           (i * 3);
 
-      growth.add(FlSpot(year, g.toDouble()));
-      satisfaction.add(FlSpot(year, s.toDouble()));
+      growth.add(FlSpot(year, g));
+      satisfaction.add(FlSpot(year, s));
     }
 
     setState(() {
@@ -104,12 +108,9 @@ void _onNavTap(int index) {
   }
 }
 
-  /// 🔁 UPDATE HELPER
   void updateValue(VoidCallback update) {
-    setState(() {
-      update();
-    });
-    generateProjection(); // ✅ update graph
+    setState(update);
+    generateProjection();
   }
 
   @override
@@ -124,17 +125,19 @@ void _onNavTap(int index) {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// HEADER
               Row(
-                children: const [
-                  Icon(Icons.arrow_back),
-                  SizedBox(width: 10),
-                  Text(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
                     "Scenario Simulation",
-                    style: TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -168,10 +171,9 @@ void _onNavTap(int index) {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _legendItem(Colors.green, "Economic Growth"),
+                        _legendItem(Colors.green, "Growth"),
                         const SizedBox(width: 16),
-                        _legendItem(
-                            Colors.greenAccent, "Public Satisfaction"),
+                        _legendItem(Colors.lightGreen, "Satisfaction"),
                       ],
                     )
                   ],
@@ -180,20 +182,15 @@ void _onNavTap(int index) {
 
               const SizedBox(height: 20),
 
-              /// TRADE-OFFS
+              /// INFO
               _card(
                 "Trade-offs Analysis",
                 Column(
                   children: [
-                    _infoTile(
-                        "Economic Impact",
-                        "+0% GDP growth by 2028",
-                        Colors.green),
+                    _infoTile("Economic Impact", "+GDP growth", Colors.green),
                     const SizedBox(height: 12),
-                    _infoTile(
-                        "Social Welfare",
-                        "Healthcare improvement affects life expectancy +0 years",
-                        Colors.green.shade400),
+                    _infoTile("Social Welfare",
+                        "Healthcare improves life expectancy", Colors.green),
                   ],
                 ),
               ),
@@ -204,29 +201,18 @@ void _onNavTap(int index) {
     );
   }
 
-  /// 🎚 SLIDER
   Widget _slider(String label, double value, Function(double) onChanged) {
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label),
-            Text("${value.toInt()}%"),
-          ],
+          children: [Text(label), Text("${value.toInt()}%")],
         ),
-        Slider(
-          value: value,
-          min: 0,
-          max: 100,
-          activeColor: Colors.green,
-          onChanged: onChanged,
-        ),
+        Slider(value: value, min: 0, max: 100, onChanged: onChanged),
       ],
     );
   }
 
-  /// 📊 CHART
   Widget _buildChart() {
     return SizedBox(
       height: 220,
@@ -234,139 +220,48 @@ void _onNavTap(int index) {
         LineChartData(
           minX: 2024,
           maxX: 2028,
-          minY: 50,
-          maxY: 140,
-
-          gridData: FlGridData(
-            show: true,
-            horizontalInterval: 20,
-            verticalInterval: 1,
-            getDrawingHorizontalLine: (value) =>
-                FlLine(color: Colors.grey.withOpacity(0.2)),
-            getDrawingVerticalLine: (value) =>
-                FlLine(color: Colors.grey.withOpacity(0.1)),
-          ),
-
-          titlesData: FlTitlesData(
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: 30,
-                getTitlesWidget: (value, meta) =>
-                    Text(value.toInt().toString(),
-                        style: const TextStyle(fontSize: 10)),
-              ),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: 1,
-                getTitlesWidget: (value, meta) => Padding(
-                  padding: const EdgeInsets.only(top: 6),
-                  child: Text(value.toInt().toString(),
-                      style: const TextStyle(fontSize: 10)),
-                ),
-              ),
-            ),
-            rightTitles:
-                AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles:
-                AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-
-          borderData: FlBorderData(show: false),
-
           lineBarsData: [
-            LineChartBarData(
-              spots: growthSpots,
-              isCurved: true,
-              barWidth: 3,
-              gradient: const LinearGradient(
-                colors: [Colors.green, Colors.lightGreen],
-              ),
-              dotData: FlDotData(show: true),
-            ),
-            LineChartBarData(
-              spots: satisfactionSpots,
-              isCurved: true,
-              barWidth: 3,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.greenAccent.shade400,
-                  Colors.greenAccent.shade100
-                ],
-              ),
-              dotData: FlDotData(show: true),
-            ),
+            LineChartBarData(spots: growthSpots, isCurved: true),
+            LineChartBarData(spots: satisfactionSpots, isCurved: true),
           ],
         ),
       ),
     );
   }
 
-  /// 🏷 LEGEND
   Widget _legendItem(Color color, String text) {
     return Row(
       children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration:
-              BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
+        Container(width: 10, height: 10, color: color),
         const SizedBox(width: 6),
-        Text(text, style: const TextStyle(fontSize: 12)),
+        Text(text),
       ],
     );
   }
 
-  /// 📦 CARD
   Widget _card(String title, Widget child) {
     return Container(
       padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10)
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 16),
-          child,
-        ],
+        children: [Text(title), const SizedBox(height: 10), child],
       ),
     );
   }
 
-  /// 📊 INFO TILE
-  Widget _infoTile(String title, String subtitle, Color color) {
+  Widget _infoTile(String t, String s, Color c) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color, color.withOpacity(0.6)],
-        ),
-        borderRadius: BorderRadius.circular(14),
-      ),
+      padding: const EdgeInsets.all(12),
+      decoration:
+          BoxDecoration(color: c, borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 6),
-          Text(subtitle,
-              style: const TextStyle(color: Colors.white70)),
-        ],
+        children: [Text(t), Text(s)],
       ),
     );
   }
