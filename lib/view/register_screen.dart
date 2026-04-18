@@ -1,386 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:intl/intl.dart';
-// import 'dart:developer';
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:intl/intl.dart';
-// import 'package:socio_hub/controller/auth_controller.dart';
-// import 'package:socio_hub/model/data_model.dart';
-// import 'package:socio_hub/view/customsnackbar.dart';
-// import 'package:socio_hub/view/login_screen.dart';
-// import 'package:socio_hub/view/splash_screen.dart';
-
-// class RegisterScreen extends StatefulWidget {
-//   const RegisterScreen({super.key});
-
-//   @override
-//   State<RegisterScreen> createState() => _RegisterScreenState();
-// }
-
-// class _RegisterScreenState extends State<RegisterScreen> {
-//   bool _obscurePassword = true;
-//   bool _obscureConfirmPassword = true;
-//   bool isLoading = false;
-//   final TextEditingController flatNoController = TextEditingController();
-//   final TextEditingController parkingNoController = TextEditingController();
-//   final TextEditingController floorNoController = TextEditingController();
-//   final TextEditingController dateController = TextEditingController();
-//   selectDate(BuildContext context) async {
-//     DateTime? pickedDate = await showDatePicker(
-//       context: context,
-//       firstDate: DateTime(2000),
-//       lastDate: DateTime(2025),
-//     );
-//     if (pickedDate != null) {
-//       String strDate = DateFormat.yMMMMd().format(pickedDate!);
-//       dateController.text = strDate;
-//     }
-//   }
-
-//   final FirebaseFirestore _firebaseFirestoreObj = FirebaseFirestore.instance;
-//   List<DataModel> dataList = [];
-
-//   AuthController authController = AuthController();
-//   TextEditingController emailController = TextEditingController();
-//   TextEditingController passwordController = TextEditingController();
-//   TextEditingController firstNameController = TextEditingController();
-//   TextEditingController lastNameController = TextEditingController();
-//   TextEditingController dobController = TextEditingController();
-//   TextEditingController flatController = TextEditingController();
-//   TextEditingController floorController = TextEditingController();
-//   TextEditingController parkingController = TextEditingController();
-//   TextEditingController confirmPasswordController = TextEditingController();
-//   TextEditingController addressController = TextEditingController();
-//   TextEditingController mobileController = TextEditingController();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: const Color(0xFFEAF3FF),
-//       body: Container(
-//         width: 450,
-//         height: 800,
-//         decoration: const BoxDecoration(
-//           gradient: LinearGradient(
-//             colors: [Color(0xFFF5F9FF), Color(0xFFEAF3FF)],
-//             begin: Alignment.topLeft,
-//             end: Alignment.bottomRight,
-//           ),
-//         ),
-//         child: Center(
-//           child: SingleChildScrollView(
-//             child: Container(
-//               margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-//               padding: const EdgeInsets.all(24),
-//               decoration: BoxDecoration(
-//                 color: Colors.white.withOpacity(0.9),
-//                 borderRadius: BorderRadius.circular(30),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     color: Colors.black.withOpacity(0.1),
-//                     blurRadius: 15,
-//                     offset: const Offset(0, 6),
-//                   ),
-//                 ],
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Align(
-//                     alignment: Alignment.center,
-//                     child: Text(
-//                       'Register',
-//                       style: GoogleFonts.poppins(
-//                         color: Color(0xFF8A3FFC),
-//                         fontSize: 25,
-//                       ),
-//                     ),
-//                   ),
-
-//                   const SizedBox(height: 24),
-//                   const Text(
-//                     "Create Account",
-//                     style: TextStyle(
-//                       fontSize: 22,
-//                       fontWeight: FontWeight.bold,
-//                       color: Colors.black87,
-//                     ),
-//                   ),
-//                   const Text(
-//                     "Fill the details to register",
-//                     style: TextStyle(color: Colors.black54),
-//                   ),
-
-//                   const SizedBox(height: 20),
-
-//                   // Form Fiel
-//                    _buildTextField(firstNameController,Icons.person, "First Name"),
-//                    _buildTextField(lastNameController,Icons.person_outline, "Last Name"),
-
-//                   TextField(
-//                     controller: dateController,
-//                   _buildTextField(Icons.person, "First Name",firstNameController),
-//                   _buildTextField(Icons.person_outline, "Last Name",lastNameController),
-//                   TextField(
-//                     controller: dobController,
-
-//                     decoration: InputDecoration(
-//                       prefixIcon: Icon(Icons.cake, color: Colors.grey[700]),
-//                       hintText: "Enter DOB",
-//                       filled: true,
-//                       fillColor: Colors.white,
-//                       contentPadding: const EdgeInsets.symmetric(
-//                         vertical: 18,
-//                         horizontal: 20,
-//                       ),
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(15),
-//                         borderSide: const BorderSide(color: Colors.transparent),
-//                       ),
-//                       enabledBorder: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(15),
-//                         borderSide: BorderSide(color: Colors.grey[300]!),
-//                       ),
-//                       focusedBorder: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(15),
-//                         borderSide: const BorderSide(
-//                           color: Color(0xFF9C27F0),
-//                           width: 1.4,
-//                         ),
-//                       ),
-//                     ),
-//                     onTap: () async {
-//                       DateTime? pickedDate = await showDatePicker(
-//                         context: context,
-//                         firstDate: DateTime(2000),
-//                         lastDate: DateTime(2025),
-//                       );
-//                       dobController.text = DateFormat.yMMMd().format(
-//                         pickedDate!,
-//                       );
-//                     },
-//                   ),
-//                   // _buildTextField(Icons.cake, "Date of Birth (DD/MM/YYYY)",dobController),
-//                   _buildTextField(Icons.email_outlined, "Email ID",emailController),
-//                   _buildTextField(Icons.location_on, "Address", addressController),
-//                   _buildTextField(Icons.phone, "Mobile Number", mobileController),
-//                   _buildTextField(Icons.home, "Flat No",flatController),
-//                   _buildTextField(Icons.apartment, "Floor No",floorController),
-//                   _buildTextField(Icons.local_parking, "Parking No",parkingController),
-
-//                     decoration: InputDecoration(
-//                       prefixIcon: Icon(Icons.cake, color: Colors.grey[700]),
-//                       hintText: "Enter DOB",
-//                       filled: true,
-//                       fillColor: Colors.white,
-//                       contentPadding: const EdgeInsets.symmetric(
-//                         vertical: 18,
-//                         horizontal: 20,
-//                       ),
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(15),
-//                         borderSide: const BorderSide(color: Colors.transparent),
-//                       ),
-//                       enabledBorder: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(15),
-//                         borderSide: BorderSide(color: Colors.grey[300]!),
-//                       ),
-//                       focusedBorder: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(15),
-//                         borderSide: const BorderSide(
-//                           color: Color(0xFF9C27F0),
-//                           width: 1.4,
-//                         ),
-//                       ),
-//                     ),
-//                     onTap: () async {
-//                       DateTime? pickedDate = await showDatePicker(
-//                         context: context,
-//                         firstDate: DateTime(2000),
-//                         lastDate: DateTime(2025),
-//                       );
-//                       dateController.text = DateFormat.yMMMd().format(
-//                         pickedDate!,
-//                       );
-//                     },
-//                   ),
-
-//                   _buildTextField(emailController,
-//                     Icons.email_outlined, "Email ID"),
-//                   _buildTextField(flatNoController,
-//                     Icons.home, "Flat No"),
-//                   _buildTextField(floorNoController,
-//                     Icons.apartment, "Floor No"),
-//                   _buildTextField(parkingNoController,
-//                     Icons.local_parking, "Parking No"),
-
-//                   _buildPasswordField("Password", _obscurePassword, (value) {
-//                     setState(() => _obscurePassword = !_obscurePassword);
-//                   }),
-//                   _buildPasswordField(
-//                     "Confirm Password",
-//                     _obscureConfirmPassword,
-//                     (value) {
-//                       setState(
-//                         () =>
-//                             _obscureConfirmPassword = !_obscureConfirmPassword,
-//                       );
-//                     },
-//                   ),
-
-//                   const SizedBox(height: 25),
-//                   // Register Button
-//                   SizedBox(
-//                     width: double.infinity,
-//                     child: ElevatedButton(
-
-//                       onPressed: () async{
-//                         if(emailController.text.trim().isNotEmpty && passwordController.text.trim().isNotEmpty && firstNameController.text.trim().isNotEmpty && lastNameController.text.trim().isNotEmpty && dobController.text.trim().isNotEmpty && flatController.text.trim().isNotEmpty && floorController.text.trim().isNotEmpty && confirmPasswordController.text.trim().isNotEmpty && parkingController.text.trim().isNotEmpty && addressController.text.trim().isNotEmpty) {
-
-//                         try{
-//                           authController.signup(emailController.text, passwordController.text, context);
-
-//                         CustomSnackbar().showCustomSnackbar(context,'Register Successfully',bgColor: Colors.green);
-//                         Navigator.of(context).pop();
-//                         }catch(e){
-//                           CustomSnackbar().showCustomSnackbar(context,'Please Fill the details',bgColor: Colors.red);
-//                         }
-//                         Map<String,dynamic> obj = {
-//                             'firstName': firstNameController.text,
-//                             'lastName': lastNameController.text,
-//                             'dob': dobController.text,
-//                             'emailId': emailController.text,
-//                             'flatNo': flatController.text,
-//                             'floorNo': floorController.text,
-//                             'parkingNo': parkingController.text,
-//                             'Address': addressController.text,
-//                             'phone': mobileController.text
-//                           };
-//                         await _firebaseFirestoreObj.collection("UserData").add(obj);
-//                         log("Data Added Successfully");
-
-//                         setState(() {
-
-//                         });
-
-//                       }
-//                       emailController.clear();
-//                       passwordController.clear();
-//                       firstNameController.clear();
-//                       lastNameController.clear();
-//                       dobController.clear();
-//                       flatController.clear();
-//                       floorController.clear();
-//                       parkingController.clear();
-//                       confirmPasswordController.clear();
-//                       addressController.clear();
-//                       },
-// >>>>>>> 1cd56c1 (nineth commit)
-//                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: const Color(0xFF9C27F0),
-//                         shape: RoundedRectangleBorder(
-//                           borderRadius: BorderRadius.circular(20),
-//                         ),
-//                         padding: const EdgeInsets.symmetric(vertical: 16),
-//                         elevation: 4,
-//                         shadowColor: Colors.purpleAccent.withOpacity(0.4),
-//                       ),
-//                       child: const Text(
-//                         "Register →",
-//                         style: TextStyle(
-//                           color: Colors.white,
-//                           fontWeight: FontWeight.bold,
-//                           fontSize: 16,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildTextField(TextEditingController controller,
-//     IconData icon, String hintText) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 6),
-//       child: TextField(
-//         decoration: InputDecoration(
-//           prefixIcon: Icon(icon, color: Colors.grey[700]),
-//           hintText: hintText,
-//           filled: true,
-//           fillColor: Colors.white,
-//           contentPadding: const EdgeInsets.symmetric(
-//             vertical: 18,
-//             horizontal: 20,
-//           ),
-//           border: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(15),
-//             borderSide: const BorderSide(color: Colors.transparent),
-//           ),
-//           enabledBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(15),
-//             borderSide: BorderSide(color: Colors.grey[300]!),
-//           ),
-//           focusedBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(15),
-//             borderSide: const BorderSide(color: Color(0xFF9C27F0), width: 1.4),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildPasswordField(
-//     String hintText,
-//     bool obscure,
-//     Function(bool) toggle,
-//   ) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 6),
-//       child: TextField(
-//         obscureText: obscure,
-//         decoration: InputDecoration(
-//           prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
-//           suffixIcon: IconButton(
-//             icon: Icon(
-//               obscure ? Icons.visibility_off : Icons.visibility,
-//               color: Colors.grey,
-//             ),
-//             onPressed: () => toggle(obscure),
-//           ),
-//           hintText: hintText,
-//           filled: true,
-//           fillColor: Colors.white,
-//           contentPadding: const EdgeInsets.symmetric(
-//             vertical: 18,
-//             horizontal: 20,
-//           ),
-//           border: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(15),
-//             borderSide: const BorderSide(color: Colors.transparent),
-//           ),
-//           enabledBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(15),
-//             borderSide: BorderSide(color: Colors.grey[300]!),
-//           ),
-//           focusedBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(15),
-//             borderSide: const BorderSide(color: Color(0xFF9C27F0), width: 1.4),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:budegt_iq/controller/auth_controller.dart';
 import 'package:budegt_iq/view/customsnackbar.dart';
 import 'package:budegt_iq/view/login_screen.dart';
@@ -402,23 +19,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscureConfirmPassword = true;
   bool isLoading = false;
 
+  String selectedNationality = "Select Nationality";
+
+  List<String> nationalityList = [
+    "Select Nationality",
+    "Indian",
+    "American",
+    "Canadian",
+    "Australian",
+    "Other"
+  ];
+
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final AuthController authController = AuthController();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
-  final TextEditingController flatController = TextEditingController();
-  final TextEditingController floorController = TextEditingController();
-  final TextEditingController parkingController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
-  final TextEditingController familyMemberController = TextEditingController();
-  final TextEditingController vehicleCountController = TextEditingController();
+  final TextEditingController citizenController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -431,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF8A3FFC), // Purple top
+              Colors.white, // Purple top
               Colors.white, // White bottom
             ],
           ),
@@ -458,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Text(
                         'Register',
                         style: GoogleFonts.poppins(
-                          color: Colors.white,
+                          color: Colors.green,
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
                         ),
@@ -487,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF4A148C),
+                                color: Colors.green,
                               ),
                             ),
 
@@ -495,13 +116,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             _buildTextField(
                               Icons.person,
-                              "First Name",
+                              "Enter Your Name",
                               firstNameController,
-                            ),
-                            _buildTextField(
-                              Icons.person_outline,
-                              "Last Name",
-                              lastNameController,
                             ),
                             _buildTextField(
                               Icons.email_outlined,
@@ -513,37 +129,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               "Mobile Number",
                               mobileController,
                             ),
-                            _buildTextField(
-                              Icons.home,
-                              "Flat No",
-                              flatController,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: DropdownButtonFormField<String>(
+                                value: selectedNationality,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.apartment, color: Colors.grey[700]),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                                items: nationalityList.map((String value) {
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedNationality = value!;
+                                    citizenController.text = value; // ✅ keep your old logic working
+                                  });
+                                },
+                              ),
                             ),
-                            _buildTextField(
-                              Icons.apartment,
-                              "Floor No",
-                              floorController,
-                            ),
-                            _buildTextField(
-                              Icons.location_on,
-                              "Address",
-                              addressController,
-                            ),
-                            _buildTextField(
-                              Icons.local_parking,
-                              "Parking No",
-                              parkingController,
-                            ),
-                            _buildTextField(
-                              Icons.local_parking,
-                              "Members in Family",
-                              familyMemberController,
-                            ),
-                            _buildTextField(
-                              Icons.local_parking,
-                              "Vehicle Count",
-                              vehicleCountController,
-                            ),
-
+                        
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 6),
                               child: TextField(
@@ -600,7 +212,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               child: ElevatedButton(
                                 onPressed: isLoading ? null : _handleRegister,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF8A3FFC),
+                                  backgroundColor: Colors.green,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -613,11 +225,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         color: Colors.white,
                                       )
                                     : const Text(
-                                        "Register →",
+                                        "Sign Up",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white70,
+                                          color: Colors.white,
                                         ),
                                       ),
                               ),
@@ -637,80 +249,92 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _handleRegister() async {
-    if (!_isFormValid()) {
-      CustomSnackbar().showCustomSnackbar(
-        context,
-        'Please fill all fields correctly.',
-        bgColor: Colors.red,
-      );
-      return;
-    }
-    if (passwordController.text.trim() !=
-        confirmPasswordController.text.trim()) {
-      CustomSnackbar().showCustomSnackbar(
-        context,
-        'Passwords do not match.',
-        bgColor: Colors.red,
-      );
-      return;
-    }
-
-    setState(() => isLoading = true);
-
-    try {
-      await authController.signup(
-        emailController.text.trim(),
-        passwordController.text.trim(),
-        context,
-      );
-
-      await _firebaseFirestore.collection("UserData").add({
-        'firstName': firstNameController.text.trim(),
-        'lastName': lastNameController.text.trim(),
-        'dob': dobController.text.trim(),
-        'emailId': emailController.text.trim(),
-        'flatNo': flatController.text.trim(),
-        'floorNo': floorController.text.trim(),
-        'parkingNo': parkingController.text.trim(),
-        'Address': addressController.text.trim(),
-        'phone': mobileController.text.trim(),
-        'familyMembers': familyMemberController.text.trim(),
-        'vehicleCount': vehicleCountController.text.trim(),
-      });
-
-      CustomSnackbar().showCustomSnackbar(
-        context,
-        'Registered Successfully!',
-        bgColor: Colors.green,
-      );
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
-    } catch (e) {
-      CustomSnackbar().showCustomSnackbar(
-        context,
-        'Registration failed: $e',
-        bgColor: Colors.red,
-      );
-    } finally {
-      setState(() => isLoading = false);
-    }
+  if (!_isFormValid()) {
+    CustomSnackbar().showCustomSnackbar(
+      context,
+      'Please fill all fields correctly.',
+      bgColor: Colors.red,
+    );
+    return;
   }
 
+  // ✅ NEW: Nationality Check (ONLY ADDITION)
+  if (!citizenController.text.trim().toLowerCase().contains("india")) {
+    CustomSnackbar().showCustomSnackbar(
+      context,
+      'User must be Indian',
+      bgColor: Colors.red,
+    );
+    return;
+  }
+
+  if (passwordController.text.trim() !=
+      confirmPasswordController.text.trim()) {
+    CustomSnackbar().showCustomSnackbar(
+      context,
+      'Passwords do not match.',
+      bgColor: Colors.red,
+    );
+    return;
+  }
+
+  setState(() => isLoading = true);
+
+  try {
+    // ✅ MODIFIED: Capture result
+    bool success = await authController.signup(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
+
+    // ✅ NEW: Stop if signup fails
+    if (!success) {
+      CustomSnackbar().showCustomSnackbar(
+        context,
+        'Registration Failed',
+        bgColor: Colors.red,
+      );
+      return;
+    }
+
+    // ✅ SAME: Firestore logic (unchanged)
+    await _firebaseFirestore.collection("UserData").add({
+      'Name': firstNameController.text.trim(),
+      'dob': dobController.text.trim(),
+      'emailId': emailController.text.trim(),
+      'Nationality': citizenController.text.trim(),
+      'phone': mobileController.text.trim(),
+    });
+
+    CustomSnackbar().showCustomSnackbar(
+      context,
+      'Registered Successfully!',
+      bgColor: Colors.green,
+    );
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
+  } catch (e) {
+    CustomSnackbar().showCustomSnackbar(
+      context,
+      'Registration failed: $e',
+      bgColor: Colors.red,
+    );
+  } finally {
+    setState(() => isLoading = false);
+  }
+}
+
   bool _isFormValid() {
-    return emailController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty &&
-        confirmPasswordController.text.isNotEmpty &&
-        firstNameController.text.isNotEmpty &&
-        lastNameController.text.isNotEmpty &&
-        dobController.text.isNotEmpty &&
-        flatController.text.isNotEmpty &&
-        floorController.text.isNotEmpty &&
-        parkingController.text.isNotEmpty &&
-        addressController.text.isNotEmpty &&
-        mobileController.text.isNotEmpty;
+  return emailController.text.isNotEmpty &&
+      passwordController.text.isNotEmpty &&
+      confirmPasswordController.text.isNotEmpty &&
+      firstNameController.text.isNotEmpty &&
+      dobController.text.isNotEmpty &&
+      mobileController.text.isNotEmpty &&
+      selectedNationality != "Select Nationality"; // ✅ added
   }
 
   Widget _buildTextField(

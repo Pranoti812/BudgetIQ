@@ -12,7 +12,20 @@
           "package_name": "com.example.budegt_iq"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "963191599541-crs6nt7mv2bu0im90hiej18p7m2gk7tm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.budegt_iq",
+            "certificate_hash": "215df6bd0420976c974707a0dc2980c4293a3d4c"
+          }
+        },
+        {
+          "client_id": "963191599541-4qj2i6ej4avfq7i0ue3t862e8qof1nha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCN7ctrjCKr7Pw2kjcWD4mGz3a2uKS2mKY"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "963191599541-4qj2i6ej4avfq7i0ue3t862e8qof1nha.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
