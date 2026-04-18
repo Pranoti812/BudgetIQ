@@ -1,3 +1,6 @@
+import 'package:budegt_iq/view/dashboard_screen.dart';
+import 'package:budegt_iq/view/settings_screen.dart';
+import 'package:budegt_iq/view/simulation_screen.dart';
 import 'package:budegt_iq/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -5,7 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Safe initialization (prevents duplicate-app error)
+  //initialization
   try {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -33,6 +36,6 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(debugShowCheckedModeBanner: false,
-     home:  SplashScreen());
+     home:  DataIntegrationScreen());
   }
 }

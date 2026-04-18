@@ -3,6 +3,7 @@ import 'package:budegt_iq/view/upload_service.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:budegt_iq/controller/home_controller.dart';
 
 class CitizenHomeScreen extends StatefulWidget {
   const CitizenHomeScreen({super.key});
@@ -12,29 +13,30 @@ class CitizenHomeScreen extends StatefulWidget {
 }
 
 class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
+  final controller = HomeController();
+  bool isLoading = true;
   int currentIndex = 0;
-
-  bool isUploaded = false; // 🔥 ADDED
+  bool isUploaded = false;
 
   @override
   void initState() {
     super.initState();
-
-    // 🔥 Upload data automatically once
     uploadDataOnce();
+    loadData(); // ✅ merged both initStates
   }
 
   Future<void> uploadDataOnce() async {
     if (!isUploaded) {
       isUploaded = true;
-
-      print("🚀 Uploading data...");
       await UploadService.uploadJsonToFirebase();
-      print("✅ Upload complete");
     }
   }
 
-  // 🔥 FETCH DATA FROM FIREBASE (UNCHANGED)
+  Future<void> loadData() async {
+    await controller.loadData();
+    setState(() => isLoading = false);
+  }
+
   Future<Map<String, dynamic>> getBudgetData() async {
     var snapshot =
         await FirebaseFirestore.instance.collection('gva_data').get();
@@ -71,98 +73,20 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xffeef4f2),
 
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// HEADER
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Hello, Citizen",
-                        style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        "Track your government's budget allocation",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Stack(
-                    children: [
-                      const Icon(
-                        Icons.notifications_none,
-                        size: 34,
-                        color: Color(0xff00b8a9),
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          height: 22,
-                          width: 22,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "3",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
+      // ✅ KEEP ONLY ONE bottom nav
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: currentIndex,
+        onTap: (i) => setState(() => currentIndex = i),
+      ),
 
-              const SizedBox(height: 30),
-
-              /// PIE CARD
-              Container(
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 20,
-                      color: Colors.black.withOpacity(.08),
-                      offset: const Offset(0, 10),
-                    )
-                  ],
-                ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Where Your Tax Goes",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 30),
 
                     /// PIE CHART
                     FutureBuilder(
@@ -262,134 +186,56 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                         );
                       },
                     ),
-                    
-                  ],
-                ),
-              ),
 
-              const SizedBox(height: 28),
+                    const SizedBox(height: 28),
 
-              /// BUDGET CARDS
-              FutureBuilder(
-                future: getBudgetData(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return SizedBox();
+                    /// BUDGET CARDS
+                    FutureBuilder(
+                      future: getBudgetData(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return SizedBox();
 
-                  var data = snapshot.data as Map<String, dynamic>;
-                  Map<String, double> totals = data['totals'];
-                  List keys = data['keys'];
+                        var data = snapshot.data as Map<String, dynamic>;
+                        Map<String, double> totals = data['totals'];
+                        List keys = data['keys'];
 
-                  int count = keys.length > 3 ? 3 : keys.length;
+                        int count = keys.length > 3 ? 3 : keys.length;
 
-                  final icons = [
-                    Icons.favorite_border,
-                    Icons.school_outlined,
-                    Icons.apartment_outlined,
-                  ];
+                        final icons = [
+                          Icons.favorite_border,
+                          Icons.school_outlined,
+                          Icons.apartment_outlined,
+                        ];
 
-                  final colors = [
-                    Color(0xff12b8aa),
-                    Color(0xff18c54e),
-                    Color(0xff2f77f6),
-                  ];
+                        final colors = [
+                          Color(0xff12b8aa),
+                          Color(0xff18c54e),
+                          Color(0xff2f77f6),
+                        ];
 
-                  return Row(
-                    children: List.generate(count, (index) {
-                      return Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              right: index != count - 1 ? 16 : 0),
-                          child: BudgetCard(
-                            icon: icons[index],
-                            iconColor: colors[index],
-                            title: keys[index],
-                            amount:
-                                "₹${totals[keys[index]]!.toStringAsFixed(0)}",
-                          ),
-                        ),
-                      );
-                    }),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-                Container(
-                height: 68,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xff14b8b0),
-                      Color(0xff00d641),
-                    ],
-                  ),
-                ),
-                child: const Center(
-                  child: Text(
-                    "View Region Insights",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
+                        return Row(
+                          children: List.generate(count, (index) {
+                            return Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    right: index != count - 1 ? 16 : 0),
+                                child: BudgetCard(
+                                  icon: icons[index],
+                                  iconColor: colors[index],
+                                  title: keys[index],
+                                  amount:
+                                      "₹${totals[keys[index]]!.toStringAsFixed(0)}",
+                                ),
+                              ),
+                            );
+                          }),
+                        );
+                      },
                     ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 18),
-
-              /// WHITE BUTTON
-              Container(
-                height: 68,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Color(0xffb8f2e5),
-                    width: 1.2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 10,
-                      color: Colors.black12,
-                      offset: Offset(0, 6),
-                    )
-                  ],
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.chat_bubble_outline, size: 24),
-                    SizedBox(width: 10),
-                    Text(
-                      "Ask AI Assistant",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
                   ],
                 ),
               ),
-
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
-
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: currentIndex,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-      ),
+            ),
     );
   }
 }
