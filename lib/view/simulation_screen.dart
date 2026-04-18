@@ -1,4 +1,7 @@
+import 'package:budegt_iq/view/dashboard_screen.dart';
 import 'package:budegt_iq/view/gov_bottm_nav.dart';
+import 'package:budegt_iq/view/region.dart';
+import 'package:budegt_iq/view/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -59,26 +62,46 @@ class _SimulationScreenState extends State<SimulationScreen> {
   }
 
   /// 🔁 NAVIGATION
-  void _onNavTap(int index) {
-    setState(() => currentIndex = index);
+void _onNavTap(int index) {
+  if (index == currentIndex) return; // prevent reload
 
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, '/dashboard');
-        break;
-      case 1:
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, '/ai');
-        break;
-      case 3:
-        Navigator.pushReplacementNamed(context, '/regions');
-        break;
-      case 4:
-        Navigator.pushReplacementNamed(context, '/settings');
-        break;
-    }
+  switch (index) {
+    case 0:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+      );
+      break;
+
+    case 1:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const SimulationScreen()),
+      );
+      break;
+
+    // case 2:
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (_) => const AIInsightsScreen()),
+    //   );
+    //   break;
+
+    case 3:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MyApp()),
+      );
+      break;
+
+    case 4:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DataIntegrationScreen()),
+      );
+      break;
   }
+}
 
   /// 🔁 UPDATE HELPER
   void updateValue(VoidCallback update) {
