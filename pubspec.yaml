@@ -9,6 +9,7 @@ environment:
 dependencies:
   cloud_firestore: ^6.3.0
   firebase_auth: ^6.4.0
+  firebase_core: ^4.7.0
   flutter:
     sdk: flutter
   google_fonts: ^8.0.2
@@ -24,4 +25,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/budegtIQLogo.png
+    - assets/BudgetIQ_LOGO.png
+    - assets/data.json
