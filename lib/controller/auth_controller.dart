@@ -14,7 +14,7 @@ class AuthController {
       CustomSnackbar().showCustomSnackbar(context, 'Login Successfully',bgColor: Colors.green);
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context){
-          return HomeScreen();
+          return CitizenHomeScreen();
         })
       );
       // Navigator.pushReplacementNamed(context, '/home');

@@ -1,17 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'view/splash_screen.dart';
-
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(debugShowCheckedModeBanner: false, home: SplashScreen());
-//   }
-// }
-
 import 'package:budegt_iq/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -46,9 +32,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(), // Change this if needed
-    );
+    return MaterialApp(debugShowCheckedModeBanner: false,
+     home:  SplashScreen());
   }
 }

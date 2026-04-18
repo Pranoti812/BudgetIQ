@@ -119,7 +119,7 @@
 //                   // Form Fiel
 //                    _buildTextField(firstNameController,Icons.person, "First Name"),
 //                    _buildTextField(lastNameController,Icons.person_outline, "Last Name"),
-                  
+
 //                   TextField(
 //                     controller: dateController,
 //                   _buildTextField(Icons.person, "First Name",firstNameController),
@@ -207,7 +207,7 @@
 //                       );
 //                     },
 //                   ),
-                  
+
 //                   _buildTextField(emailController,
 //                     Icons.email_outlined, "Email ID"),
 //                   _buildTextField(flatNoController,
@@ -239,11 +239,10 @@
 
 //                       onPressed: () async{
 //                         if(emailController.text.trim().isNotEmpty && passwordController.text.trim().isNotEmpty && firstNameController.text.trim().isNotEmpty && lastNameController.text.trim().isNotEmpty && dobController.text.trim().isNotEmpty && flatController.text.trim().isNotEmpty && floorController.text.trim().isNotEmpty && confirmPasswordController.text.trim().isNotEmpty && parkingController.text.trim().isNotEmpty && addressController.text.trim().isNotEmpty) {
-                          
-                          
+
 //                         try{
 //                           authController.signup(emailController.text, passwordController.text, context);
-                        
+
 //                         CustomSnackbar().showCustomSnackbar(context,'Register Successfully',bgColor: Colors.green);
 //                         Navigator.of(context).pop();
 //                         }catch(e){
@@ -264,9 +263,9 @@
 //                         log("Data Added Successfully");
 
 //                         setState(() {
-                          
+
 //                         });
-                        
+
 //                       }
 //                       emailController.clear();
 //                       passwordController.clear();
@@ -388,9 +387,8 @@ import 'package:budegt_iq/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'dart:developer';
+//import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -409,7 +407,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
@@ -450,12 +449,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   offset: const Offset(0, 0),
                   child: Column(
                     children: [
-                      
                       // SizedBox(
                       //   height: 150,
                       //   child: Image.asset("assets/images/home_services_header.png"),
                       // ),
-
                       const SizedBox(height: 10),
 
                       Text(
@@ -485,7 +482,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-
                             const Text(
                               "Create Account",
                               style: TextStyle(
@@ -497,16 +493,56 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             const SizedBox(height: 12),
 
-                            _buildTextField(Icons.person, "First Name", firstNameController),
-                            _buildTextField(Icons.person_outline, "Last Name", lastNameController),
-                            _buildTextField(Icons.email_outlined, "Email ID", emailController),
-                            _buildTextField(Icons.phone, "Mobile Number", mobileController),
-                            _buildTextField(Icons.home, "Flat No", flatController),
-                            _buildTextField(Icons.apartment, "Floor No", floorController),
-                            _buildTextField(Icons.location_on, "Address", addressController),
-                            _buildTextField(Icons.local_parking, "Parking No", parkingController),
-                            _buildTextField(Icons.local_parking, "Members in Family", familyMemberController),
-                            _buildTextField(Icons.local_parking, "Vehicle Count", vehicleCountController),
+                            _buildTextField(
+                              Icons.person,
+                              "First Name",
+                              firstNameController,
+                            ),
+                            _buildTextField(
+                              Icons.person_outline,
+                              "Last Name",
+                              lastNameController,
+                            ),
+                            _buildTextField(
+                              Icons.email_outlined,
+                              "Email ID",
+                              emailController,
+                            ),
+                            _buildTextField(
+                              Icons.phone,
+                              "Mobile Number",
+                              mobileController,
+                            ),
+                            _buildTextField(
+                              Icons.home,
+                              "Flat No",
+                              flatController,
+                            ),
+                            _buildTextField(
+                              Icons.apartment,
+                              "Floor No",
+                              floorController,
+                            ),
+                            _buildTextField(
+                              Icons.location_on,
+                              "Address",
+                              addressController,
+                            ),
+                            _buildTextField(
+                              Icons.local_parking,
+                              "Parking No",
+                              parkingController,
+                            ),
+                            _buildTextField(
+                              Icons.local_parking,
+                              "Members in Family",
+                              familyMemberController,
+                            ),
+                            _buildTextField(
+                              Icons.local_parking,
+                              "Vehicle Count",
+                              vehicleCountController,
+                            ),
 
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 6),
@@ -514,7 +550,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 controller: dobController,
                                 readOnly: true,
                                 decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.cake, color: Colors.grey[700]),
+                                  prefixIcon: Icon(
+                                    Icons.cake,
+                                    color: Colors.grey[700],
+                                  ),
                                   hintText: "Date of Birth",
                                   filled: true,
                                   fillColor: Colors.white,
@@ -529,7 +568,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     lastDate: DateTime(2025),
                                   );
                                   if (pickedDate != null) {
-                                    dobController.text = DateFormat.yMMMd().format(pickedDate);
+                                    dobController.text = DateFormat.yMMMd()
+                                        .format(pickedDate);
                                   }
                                 },
                               ),
@@ -539,13 +579,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               "Password",
                               _obscurePassword,
                               passwordController,
-                              (v) => setState(() => _obscurePassword = !_obscurePassword),
+                              (v) => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
                             ),
                             _buildPasswordField(
                               "Confirm Password",
                               _obscureConfirmPassword,
                               confirmPasswordController,
-                              (v) => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                              (v) => setState(
+                                () => _obscureConfirmPassword =
+                                    !_obscureConfirmPassword,
+                              ),
                             ),
 
                             const SizedBox(height: 20),
@@ -559,17 +604,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                 ),
                                 child: isLoading
-                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
                                     : const Text(
                                         "Register →",
-                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Colors.white70),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white70,
+                                        ),
                                       ),
                               ),
                             ),
-
                           ],
                         ),
                       ),
@@ -586,18 +638,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _handleRegister() async {
     if (!_isFormValid()) {
-      CustomSnackbar().showCustomSnackbar(context, 'Please fill all fields correctly.', bgColor: Colors.red);
+      CustomSnackbar().showCustomSnackbar(
+        context,
+        'Please fill all fields correctly.',
+        bgColor: Colors.red,
+      );
       return;
     }
-    if (passwordController.text.trim() != confirmPasswordController.text.trim()) {
-      CustomSnackbar().showCustomSnackbar(context, 'Passwords do not match.', bgColor: Colors.red);
+    if (passwordController.text.trim() !=
+        confirmPasswordController.text.trim()) {
+      CustomSnackbar().showCustomSnackbar(
+        context,
+        'Passwords do not match.',
+        bgColor: Colors.red,
+      );
       return;
     }
 
     setState(() => isLoading = true);
 
     try {
-      await authController.signup(emailController.text.trim(), passwordController.text.trim(), context);
+      await authController.signup(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+        context,
+      );
 
       await _firebaseFirestore.collection("UserData").add({
         'firstName': firstNameController.text.trim(),
@@ -613,11 +678,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'vehicleCount': vehicleCountController.text.trim(),
       });
 
-      CustomSnackbar().showCustomSnackbar(context, 'Registered Successfully!', bgColor: Colors.green);
+      CustomSnackbar().showCustomSnackbar(
+        context,
+        'Registered Successfully!',
+        bgColor: Colors.green,
+      );
 
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
     } catch (e) {
-      CustomSnackbar().showCustomSnackbar(context, 'Registration failed: $e', bgColor: Colors.red);
+      CustomSnackbar().showCustomSnackbar(
+        context,
+        'Registration failed: $e',
+        bgColor: Colors.red,
+      );
     } finally {
       setState(() => isLoading = false);
     }
@@ -637,7 +713,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         mobileController.text.isNotEmpty;
   }
 
-  Widget _buildTextField(IconData icon, String hintText, TextEditingController controller) {
+  Widget _buildTextField(
+    IconData icon,
+    String hintText,
+    TextEditingController controller,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextField(
@@ -654,7 +734,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildPasswordField(
-      String hintText, bool obscure, TextEditingController controller, Function(bool) toggle) {
+    String hintText,
+    bool obscure,
+    TextEditingController controller,
+    Function(bool) toggle,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextField(
@@ -663,7 +747,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
           suffixIcon: IconButton(
-            icon: Icon(obscure ? Icons.visibility_off : Icons.visibility, color: Colors.grey),
+            icon: Icon(
+              obscure ? Icons.visibility_off : Icons.visibility,
+              color: Colors.grey,
+            ),
             onPressed: () => toggle(obscure),
           ),
           hintText: hintText,

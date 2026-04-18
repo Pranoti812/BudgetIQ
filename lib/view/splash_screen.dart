@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
     Timer(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => CitizenHomeScreen()),
       );
     });
   }
@@ -71,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen>
             children: [
               // 🔥 FULL LOGO IMAGE
               Image.asset(
-                'assets/BudegtIQ_Logo.png',
+                'assets/BudgetIQ_LOGO.png',
                 width: 450,
                 fit: BoxFit.contain,
               ),
