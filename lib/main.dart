@@ -1,4 +1,5 @@
 import 'package:budegt_iq/view/dashboard_screen.dart';
+import 'package:budegt_iq/view/gov_ai_insights.dart';
 import 'package:budegt_iq/view/settings_screen.dart';
 import 'package:budegt_iq/view/simulation_screen.dart';
 import 'package:budegt_iq/view/splash_screen.dart';
@@ -36,6 +37,6 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(debugShowCheckedModeBanner: false,
-     home:  SplashScreen());
+     home:  AIInsightsScreen());
   }
 }

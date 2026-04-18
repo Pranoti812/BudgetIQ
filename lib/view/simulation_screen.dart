@@ -1,6 +1,7 @@
 import 'package:budegt_iq/view/dashboard_screen.dart';
 import 'package:budegt_iq/view/gov_bottm_nav.dart';
 import 'package:budegt_iq/view/region.dart';
+import 'package:budegt_iq/view/region_screen.dart';
 import 'package:budegt_iq/view/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -90,7 +91,7 @@ void _onNavTap(int index) {
     case 3:
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MyApp()),
+        MaterialPageRoute(builder: (_) => const RegionScreen()),
       );
       break;
 

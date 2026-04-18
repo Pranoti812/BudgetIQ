@@ -253,10 +253,10 @@ class LegendTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(   // 🔥 WRAP WITH CONTAINER
-      constraints: BoxConstraints(maxWidth: 140), // 🔥 LIMIT WIDTH
+    return Container(   
+      constraints: BoxConstraints(maxWidth: 140), 
       child: Row(
-        mainAxisSize: MainAxisSize.min, // 🔥 IMPORTANT
+        mainAxisSize: MainAxisSize.min, 
         children: [
           Container(
             height: 14,
@@ -267,7 +267,7 @@ class LegendTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          Expanded(   // 🔥 keep Expanded here
+          Expanded(  
             child: Text(
               text,
               style: const TextStyle(fontSize: 14),
@@ -300,7 +300,7 @@ class BudgetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 165,
-      padding: const EdgeInsets.all(10), // 🔥 added padding
+      padding: const EdgeInsets.all(10), 
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -335,7 +335,7 @@ class BudgetCard extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          // 🔥 FIX: Amount flexible
+          
           Flexible(
             child: Text(
               amount,
