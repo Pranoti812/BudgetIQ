@@ -1,155 +1,386 @@
+import 'package:budegt_iq/view/bottom_nav.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
-class HomeScreen extends StatelessWidget {
+class CitizenHomeScreen extends StatefulWidget {
+  const CitizenHomeScreen({super.key});
+
+  @override
+  State<CitizenHomeScreen> createState() => _CitizenHomeScreenState();
+}
+
+class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
+  int currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F7FB),
-      appBar: AppBar(
-        title: Text("Citizen Dashboard"),
-        backgroundColor: Color(0xFF1E3A8A),
-        elevation: 0,
-      ),
+      backgroundColor: const Color(0xffeef4f2),
 
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 📍 REGION
-            Text(
-              "Your Region: Nashik",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-
-            SizedBox(height: 10),
-
-            // 💰 TOTAL BUDGET CARD
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Color(0xFF6366F1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// HEADER
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Total Budget", style: TextStyle(color: Colors.white70)),
-                  SizedBox(height: 5),
-                  Text(
-                    "₹ 10L Cr",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Hello, Citizen",
+                        style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Track your government's budget allocation",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Stack(
+                    children: [
+                      const Icon(
+                        Icons.notifications_none,
+                        size: 34,
+                        color: Color(0xff00b8a9),
+                      ),
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          height: 22,
+                          width: 22,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "3",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+
+              const SizedBox(height: 30),
+
+              /// PIE CARD
+              Container(
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 20,
+                      color: Colors.black.withOpacity(.08),
+                      offset: const Offset(0, 10),
+                    )
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Where Your Tax Goes",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+
+                    SizedBox(
+                      height: 280,
+                      child: PieChart(
+                        PieChartData(
+                          centerSpaceRadius: 65,
+                          sectionsSpace: 7,
+                          sections: [
+                            PieChartSectionData(
+                              value: 35,
+                              color: const Color(0xff18b9ab),
+                              radius: 48,
+                              showTitle: false,
+                            ),
+                            PieChartSectionData(
+                              value: 30,
+                              color: const Color(0xff17c455),
+                              radius: 48,
+                              showTitle: false,
+                            ),
+                            PieChartSectionData(
+                              value: 25,
+                              color: const Color(0xff2f77f6),
+                              radius: 48,
+                              showTitle: false,
+                            ),
+                            PieChartSectionData(
+                              value: 10,
+                              color: const Color(0xff9b52f2),
+                              radius: 48,
+                              showTitle: false,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LegendTile(
+                          color: Color(0xff18b9ab),
+                          text: "Healthcare: 35%",
+                        ),
+                        LegendTile(
+                          color: Color(0xff17c455),
+                          text: "Education: 30%",
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LegendTile(
+                          color: Color(0xff2f77f6),
+                          text: "Infrastructure: 25%",
+                        ),
+                        LegendTile(
+                          color: Color(0xff9b52f2),
+                          text: "Others: 10%",
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              /// SMALL CARDS
+              const Row(
+                children: [
+                  Expanded(
+                    child: BudgetCard(
+                      icon: Icons.favorite_border,
+                      iconColor: Color(0xff12b8aa),
+                      title: "Healthcare",
+                      amount: "₹2.5T",
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: BudgetCard(
+                      icon: Icons.school_outlined,
+                      iconColor: Color(0xff18c54e),
+                      title: "Education",
+                      amount: "₹2.1T",
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: BudgetCard(
+                      icon: Icons.apartment_outlined,
+                      iconColor: Color(0xff2f77f6),
+                      title: "Infra",
+                      amount: "₹1.8T",
                     ),
                   ),
                 ],
               ),
-            ),
 
-            SizedBox(height: 20),
+              const SizedBox(height: 28),
 
-            // 📊 SECTOR CARDS
-            Text(
-              "Sector Allocation",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+              /// GREEN BUTTON
+              Container(
+                height: 68,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xff14b8b0),
+                      Color(0xff00d641),
+                    ],
+                  ),
+                ),
+                child: const Center(
+                  child: Text(
+                    "View Region Insights",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
 
-            SizedBox(height: 10),
+              const SizedBox(height: 18),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                sectorCard("Healthcare", "30%"),
-                sectorCard("Education", "25%"),
-              ],
-            ),
+              /// WHITE BUTTON
+              Container(
+                height: 68,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Color(0xffb8f2e5),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 10,
+                      color: Colors.black12,
+                      offset: Offset(0, 6),
+                    )
+                  ],
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.chat_bubble_outline, size: 24),
+                    SizedBox(width: 10),
+                    Text(
+                      "Ask AI Assistant",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  ],
+                ),
+              ),
 
-            SizedBox(height: 10),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                sectorCard("Infrastructure", "28%"),
-                sectorCard("Agriculture", "17%"),
-              ],
-            ),
-
-            SizedBox(height: 20),
-
-            // 📌 HIGHLIGHTS
-            Text(
-              "Quick Highlights",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-
-            SizedBox(height: 10),
-
-            highlightTile("Healthcare spending increased"),
-            highlightTile("Education underfunded"),
-            highlightTile("Infrastructure stable"),
-
-            SizedBox(height: 20),
-
-            // 🔘 ACTION BUTTONS
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                actionButton("Compare"),
-                actionButton("Insights"),
-                actionButton("Feedback"),
-              ],
-            ),
-          ],
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
+      ),
+
+      /// REUSABLE NAV BAR
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: currentIndex,
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
       ),
     );
   }
+}
 
-  // 🔹 Sector Card Widget
-  Widget sectorCard(String title, String value) {
+class LegendTile extends StatelessWidget {
+  final Color color;
+  final String text;
+
+  const LegendTile({
+    super.key,
+    required this.color,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          height: 14,
+          width: 14,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: const TextStyle(fontSize: 18),
+        ),
+      ],
+    );
+  }
+}
+
+class BudgetCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String amount;
+
+  const BudgetCard({
+    super.key,
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.amount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      width: 150,
-      padding: EdgeInsets.all(12),
+      height: 165,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 14,
+            color: Colors.black.withOpacity(.06),
+            offset: const Offset(0, 8),
+          )
+        ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title, style: TextStyle(fontSize: 14)),
-          SizedBox(height: 5),
+          Icon(icon, color: iconColor, size: 48),
+          const SizedBox(height: 16),
           Text(
-            value,
-            style: TextStyle(
+            title,
+            style: const TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E3A8A),
+              color: Colors.black54,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            amount,
+            style: const TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
       ),
-    );
-  }
-
-  // 🔹 Highlight Tile
-  Widget highlightTile(String text) {
-    return Card(
-      child: ListTile(
-        leading: Icon(Icons.info, color: Color(0xFF6366F1)),
-        title: Text(text),
-      ),
-    );
-  }
-
-  // 🔹 Action Button
-  Widget actionButton(String text) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF1E3A8A)),
-      onPressed: () {},
-      child: Text(text),
     );
   }
 }
