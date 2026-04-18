@@ -12,10 +12,13 @@ dependencies:
   fl_chart: ^1.2.0
   flutter:
     sdk: flutter
+  flutter_dotenv: ^6.0.0
+  flutter_tts: ^4.2.5
   google_fonts: ^8.0.2
   http: ^1.6.0
   intl: ^0.20.2
   shared_preferences: ^2.5.5
+  speech_to_text: ^7.3.0
 
 dev_dependencies:
   flutter_test:
