@@ -11,9 +11,9 @@ class BudgetItem {
 
   factory BudgetItem.fromJson(Map<String, dynamic> json) {
     return BudgetItem(
-      title: json['title'],
-      value: json['value'].toDouble(),
-      amount: json['amount'],
+      title: json['title'] ?? "",
+      value: (json['value'] as num).toDouble(),
+      amount: json['amount'] ?? "",
     );
   }
 }

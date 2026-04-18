@@ -5,7 +5,7 @@ class HomeController {
   List<BudgetItem> items = [];
 
   Future<void> loadData() async {
-    final data = await ApiService.fetchBudget();
+    final data = await ApiService.fetchRegions();
     items = data.map((e) => BudgetItem.fromJson(e)).toList();
   }
 

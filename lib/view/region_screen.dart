@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../controller/region_controller.dart';
 import '../model/region_model.dart';
 
@@ -40,6 +41,8 @@ class _RegionScreenState extends State<RegionScreen> {
                 children: [
                   _heatmap(),
                   const SizedBox(height: 20),
+                  _graph(),
+                  const SizedBox(height: 20),
                   _regionList(),
                 ],
               ),
@@ -65,12 +68,58 @@ class _RegionScreenState extends State<RegionScreen> {
               children: [
                 Text(region.name,
                     style: const TextStyle(color: Colors.white)),
-                Text("₹${region.deficit}B",
-                    style: const TextStyle(color: Colors.white70)),
+                Text(
+                  "₹${region.deficit.toStringAsFixed(0)}B",
+                  style: const TextStyle(color: Colors.white70),
+                ),
               ],
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  /// 🔥 GRAPH (BAR CHART)
+  Widget _graph() {
+    final data = controller.getChartData();
+
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Budget Comparison",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 220,
+            child: BarChart(
+              BarChartData(
+                barGroups: List.generate(data.length, (i) {
+                  final item = data[i];
+
+                  return BarChartGroupData(
+                    x: i,
+                    barRods: [
+                      BarChartRodData(
+                        toY: (item['deficit'] as num).toDouble(),
+                        color: Colors.red,
+                        width: 8,
+                      ),
+                      BarChartRodData(
+                        toY: (item['recommended'] as num).toDouble(),
+                        color: Colors.green,
+                        width: 8,
+                      ),
+                    ],
+                  );
+                }),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -93,25 +142,34 @@ class _RegionScreenState extends State<RegionScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          /// Header
+          /// HEADER
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(r.name,
+              Expanded(
+                child: Text(
+                  r.name,
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)),
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               _priorityBadge(r.priority),
             ],
           ),
 
-          Text("Population: ${r.population}M",
-              style: const TextStyle(color: Colors.white70)),
+          const SizedBox(height: 4),
+
+          Text(
+            "Population: ${r.population}M",
+            style: const TextStyle(color: Colors.white70),
+          ),
 
           const SizedBox(height: 10),
 
-          /// Stats
+          /// STATS
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -120,15 +178,24 @@ class _RegionScreenState extends State<RegionScreen> {
             ),
             child: Column(
               children: [
-                _row("Budget Deficit", "-₹${r.deficit}B", Colors.red),
-                _row("Recommended Increase", "+₹${r.recommended}B", Colors.green),
+                _row(
+                  "Budget Deficit",
+                  "-₹${r.deficit.toStringAsFixed(0)}B",
+                  Colors.red,
+                ),
+                const SizedBox(height: 6),
+                _row(
+                  "Recommended Increase",
+                  "+₹${r.recommended.toStringAsFixed(0)}B",
+                  Colors.green,
+                ),
               ],
             ),
           ),
 
           const SizedBox(height: 10),
 
-          /// Suggestion
+          /// AI SUGGESTION
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -136,24 +203,36 @@ class _RegionScreenState extends State<RegionScreen> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.purple),
             ),
-            child: Text(r.suggestion,
-                style: const TextStyle(color: Colors.white70)),
+            child: Text(
+              r.suggestion,
+              style: const TextStyle(color: Colors.white70),
+            ),
           ),
         ],
       ),
     );
   }
 
+  /// 🔥 SAFE ROW (NO OVERFLOW)
   Widget _row(String title, String value, Color color) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(color: Colors.white70)),
-        Text(value, style: TextStyle(color: color)),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(color: Colors.white70),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(color: color),
+        ),
       ],
     );
   }
 
+  /// 🔥 PRIORITY BADGE
   Widget _priorityBadge(String priority) {
     Color color = _priorityColor(priority);
 
@@ -163,11 +242,14 @@ class _RegionScreenState extends State<RegionScreen> {
         color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(priority,
-          style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+      child: Text(
+        priority,
+        style: TextStyle(color: color, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
+  /// 🔥 PRIORITY COLOR LOGIC
   Color _priorityColor(String p) {
     switch (p) {
       case "HIGH":
@@ -179,6 +261,7 @@ class _RegionScreenState extends State<RegionScreen> {
     }
   }
 
+  /// 🔥 CARD UI
   Widget _card({required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(16),

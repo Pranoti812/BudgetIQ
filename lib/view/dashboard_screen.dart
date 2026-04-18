@@ -10,14 +10,11 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
   int _currentIndex = 0;
 
-  // 🔥 Firebase Stream (REAL-TIME)
   final Stream<DocumentSnapshot> budgetStream =
       FirebaseFirestore.instance.collection('budget').doc('current').snapshots();
 
-  // 🔥 Local State
   double totalBudget = 0;
   double efficiency = 0;
   double population = 0;
@@ -28,27 +25,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    fetchAPIData(); // API CALL
+    fetchAPIData();
   }
 
-  // 🔥 Example API Call (replace with your API)
   Future<void> fetchAPIData() async {
-    await Future.delayed(const Duration(seconds: 1));
-
+    await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
       efficiency = 94;
     });
   }
 
-  // 🔥 Navigation Handler
+  /// 🔥 FULL NAVIGATION HANDLER
   void _onNavTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    setState(() => _currentIndex = index);
 
-    // Example navigation
-    if (index == 1) {
-      Navigator.pushNamed(context, '/simulation');
+    switch (index) {
+      case 1:
+        Navigator.pushNamed(context, '/simulation');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/ai');
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/regions');
+        break;
+      case 4:
+        Navigator.pushNamed(context, '/settings');
+        break;
     }
   }
 
@@ -61,19 +64,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: StreamBuilder<DocumentSnapshot>(
           stream: budgetStream,
           builder: (context, snapshot) {
-
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
+            /// ✅ SAFE FIREBASE PARSING
             if (snapshot.hasData && snapshot.data!.exists) {
-              var data = snapshot.data!.data() as Map<String, dynamic>;
+              final raw = snapshot.data!.data();
+              if (raw != null && raw is Map<String, dynamic>) {
+                totalBudget = (raw['totalBudget'] ?? 7.1).toDouble();
+                population = (raw['population'] ?? 1.4).toDouble();
+                alerts = raw['alerts'] ?? 12;
 
-              totalBudget = data['totalBudget'] ?? 7.1;
-              population = data['population'] ?? 1.4;
-              alerts = data['alerts'] ?? 12;
-
-              allocation = List<double>.from(data['allocation'] ?? [30,25,10,35]);
+                allocation = List<double>.from(
+                  (raw['allocation'] ?? [30, 25, 10, 35])
+                      .map((e) => (e as num).toDouble()),
+                );
+              }
             }
 
             return SingleChildScrollView(
@@ -99,21 +106,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // 🔹 Header
+  /// HEADER
   Widget _buildHeader() {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Government Dashboard",
-            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+        Text(
+          "Government Dashboard",
+          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+        ),
         SizedBox(height: 6),
-        Text("AI-powered budget optimization & governance",
-            style: TextStyle(color: Colors.white70)),
+        Text(
+          "AI-powered budget optimization & governance",
+          style: TextStyle(color: Colors.white70),
+        ),
       ],
     );
   }
 
-  // 🔹 Dynamic Stats
+  /// STATS GRID (CLICKABLE)
   Widget _buildStatsGrid() {
     return GridView.count(
       shrinkWrap: true,
@@ -123,79 +134,97 @@ class _DashboardScreenState extends State<DashboardScreen> {
       mainAxisSpacing: 12,
       childAspectRatio: 1.2,
       children: [
-        _statCard("Total Budget", "₹${totalBudget}T", Icons.attach_money, Colors.purple),
+        _statCard("Total Budget", "₹${totalBudget.toStringAsFixed(1)}T", Icons.attach_money, Colors.purple),
         _statCard("Allocation Efficiency", "$efficiency%", Icons.trending_up, Colors.green),
-        _statCard("Population Covered", "${population}B", Icons.people, Colors.blue),
+        _statCard("Population Covered", "${population.toStringAsFixed(1)}B", Icons.people, Colors.blue),
         _statCard("Active Alerts", "$alerts", Icons.warning, Colors.orange),
       ],
     );
   }
 
   Widget _statCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: _cardDecoration(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color),
-          const Spacer(),
-          Text(value,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          Text(title, style: const TextStyle(color: Colors.white70)),
-        ],
+    return GestureDetector(
+      onTap: () {
+        if (title.contains("Alerts")) {
+          Navigator.pushNamed(context, '/ai');
+        } else if (title.contains("Population")) {
+          Navigator.pushNamed(context, '/regions');
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: _cardDecoration(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color),
+            const Spacer(),
+            Text(value,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            Text(title, style: const TextStyle(color: Colors.white70)),
+          ],
+        ),
       ),
     );
   }
 
-  // 🔹 Dynamic Pie Chart
+  /// PIE CHART (CLICKABLE)
   Widget _buildAllocationCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Current Allocation",
-              style: TextStyle(color: Colors.white, fontSize: 16)),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 180,
-            child: PieChart(
-              PieChartData(
-                centerSpaceRadius: 50,
-                sections: List.generate(allocation.length, (i) {
-                  final colors = [Colors.blue, Colors.teal, Colors.orange, Colors.purple];
-                  return PieChartSectionData(
-                    value: allocation[i],
-                    color: colors[i],
-                    radius: 20,
-                  );
-                }),
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, '/regions'),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: _cardDecoration(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Current Allocation",
+                style: TextStyle(color: Colors.white, fontSize: 16)),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 180,
+              child: PieChart(
+                PieChartData(
+                  centerSpaceRadius: 50,
+                  sections: List.generate(allocation.length, (i) {
+                    final colors = [
+                      Colors.blue,
+                      Colors.teal,
+                      Colors.orange,
+                      Colors.purple
+                    ];
+                    return PieChartSectionData(
+                      value: allocation[i],
+                      color: colors[i],
+                      radius: 20,
+                    );
+                  }),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // 🔹 Alerts (can be API-driven later)
+  /// AI ALERTS
   Widget _buildAIAlerts() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: _cardDecoration(),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text("AI Alerts", style: TextStyle(color: Colors.white, fontSize: 16)),
+        children: [
+          Text("AI Alerts",
+              style: TextStyle(color: Colors.white, fontSize: 16)),
           SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  // 🔹 Buttons
+  /// BUTTONS
   Widget _buildButtons() {
     return Column(
       children: [
@@ -211,7 +240,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onTap: () {
         if (text.contains("Simulation")) {
           Navigator.pushNamed(context, '/simulation');
-        } else {
+        } else if (text.contains("AI")) {
           Navigator.pushNamed(context, '/ai');
         }
       },
@@ -219,18 +248,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
         height: 50,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-              colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)]),
+            colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)],
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
-          child: Text(text,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
   }
 
-  // 🔹 Bottom Nav
+  /// BOTTOM NAV
   Widget _buildBottomNav() {
     return BottomNavigationBar(
       currentIndex: _currentIndex,

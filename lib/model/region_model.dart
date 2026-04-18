@@ -16,13 +16,13 @@ class RegionModel {
   });
 
   factory RegionModel.fromJson(Map<String, dynamic> json) {
-    return RegionModel(
-      name: json['name'],
-      priority: json['priority'],
-      deficit: json['deficit'].toDouble(),
-      recommended: json['recommended'].toDouble(),
-      population: json['population'],
-      suggestion: json['suggestion'],
-    );
+  return RegionModel(
+    name: json['name'] ?? "Unknown",
+    priority: json['priority'] ?? "LOW",
+    deficit: (json['deficit'] as num?)?.toDouble() ?? 0,
+    recommended: (json['recommended'] as num?)?.toDouble() ?? 0,
+    population: (json['population'] as num?)?.toInt() ?? 0,
+    suggestion: json['suggestion'] ?? "",
+  );
   }
 }
