@@ -1,6 +1,14 @@
+import 'package:budegt_iq/view/set_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+// 🔥 IMPORT SCREENS
+import 'simulation_screen.dart';
+import 'region_screen.dart';
+// import 'ai_screen.dart';
+import 'settings_screen.dart';
+import 'a_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -35,26 +43,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  /// 🔥 FULL NAVIGATION HANDLER
+  /// ✅ FIXED NAVIGATION (NO ROUTES NEEDED)
   void _onNavTap(int index) {
     setState(() => _currentIndex = index);
+  switch (index) {
+    case 0:
+      return;
 
-    switch (index) {
-      case 1:
-        Navigator.pushNamed(context, '/simulation');
-        break;
-      case 2:
-        Navigator.pushNamed(context, '/ai');
-        break;
-      case 3:
-        Navigator.pushNamed(context, '/regions');
-        break;
-      case 4:
-        Navigator.pushNamed(context, '/settings');
-        break;
-    }
+    case 1:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const SimulationScreen()),
+      );
+      break;
+
+    case 2:
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const AIScreen()));
+      break;
+
+    case 3:
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const RegionScreen()));
+      break;
+
+    case 4:
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
+      break;
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +83,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            /// ✅ SAFE FIREBASE PARSING
             if (snapshot.hasData && snapshot.data!.exists) {
               final raw = snapshot.data!.data();
               if (raw != null && raw is Map<String, dynamic>) {
@@ -86,15 +100,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(),
                   const SizedBox(height: 20),
                   _buildStatsGrid(),
                   const SizedBox(height: 20),
                   _buildAllocationCard(),
-                  const SizedBox(height: 20),
-                  _buildAIAlerts(),
                   const SizedBox(height: 20),
                   _buildButtons(),
                 ],
@@ -106,25 +117,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  /// HEADER
   Widget _buildHeader() {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Government Dashboard",
-          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-        ),
+        Text("Government Dashboard",
+            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
         SizedBox(height: 6),
-        Text(
-          "AI-powered budget optimization & governance",
-          style: TextStyle(color: Colors.white70),
-        ),
+        Text("AI-powered budget optimization & governance",
+            style: TextStyle(color: Colors.white70)),
       ],
     );
   }
 
-  /// STATS GRID (CLICKABLE)
   Widget _buildStatsGrid() {
     return GridView.count(
       shrinkWrap: true,
@@ -135,9 +140,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       childAspectRatio: 1.2,
       children: [
         _statCard("Total Budget", "₹${totalBudget.toStringAsFixed(1)}T", Icons.attach_money, Colors.purple),
-        _statCard("Allocation Efficiency", "$efficiency%", Icons.trending_up, Colors.green),
-        _statCard("Population Covered", "${population.toStringAsFixed(1)}B", Icons.people, Colors.blue),
-        _statCard("Active Alerts", "$alerts", Icons.warning, Colors.orange),
+        _statCard("Efficiency", "$efficiency%", Icons.trending_up, Colors.green),
+        _statCard("Population", "${population.toStringAsFixed(1)}B", Icons.people, Colors.blue),
+        _statCard("Alerts", "$alerts", Icons.warning, Colors.orange),
       ],
     );
   }
@@ -146,9 +151,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return GestureDetector(
       onTap: () {
         if (title.contains("Alerts")) {
-          Navigator.pushNamed(context, '/ai');
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const AIScreen()));
         } else if (title.contains("Population")) {
-          Navigator.pushNamed(context, '/regions');
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const RegionScreen()));
         }
       },
       child: Container(
@@ -159,8 +164,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Icon(icon, color: color),
             const Spacer(),
-            Text(value,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             Text(title, style: const TextStyle(color: Colors.white70)),
           ],
         ),
@@ -168,35 +172,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  /// PIE CHART (CLICKABLE)
   Widget _buildAllocationCard() {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/regions'),
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const RegionScreen()));
+      },
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: _cardDecoration(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Current Allocation",
-                style: TextStyle(color: Colors.white, fontSize: 16)),
+            const Text("Current Allocation", style: TextStyle(color: Colors.white)),
             const SizedBox(height: 20),
             SizedBox(
               height: 180,
               child: PieChart(
                 PieChartData(
-                  centerSpaceRadius: 50,
                   sections: List.generate(allocation.length, (i) {
-                    final colors = [
-                      Colors.blue,
-                      Colors.teal,
-                      Colors.orange,
-                      Colors.purple
-                    ];
                     return PieChartSectionData(
                       value: allocation[i],
-                      color: colors[i],
-                      radius: 20,
+                      color: [Colors.blue, Colors.teal, Colors.orange, Colors.purple][i],
                     );
                   }),
                 ),
@@ -208,23 +204,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  /// AI ALERTS
-  Widget _buildAIAlerts() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: _cardDecoration(),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("AI Alerts",
-              style: TextStyle(color: Colors.white, fontSize: 16)),
-          SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  /// BUTTONS
   Widget _buildButtons() {
     return Column(
       children: [
@@ -239,9 +218,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return GestureDetector(
       onTap: () {
         if (text.contains("Simulation")) {
-          Navigator.pushNamed(context, '/simulation');
-        } else if (text.contains("AI")) {
-          Navigator.pushNamed(context, '/ai');
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const SimulationScreen()));
+        } else {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const AIScreen()));
         }
       },
       child: Container(
@@ -253,75 +232,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
+          child: Text(text,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ),
       ),
     );
   }
 
-  /// BOTTOM NAV
   Widget _buildBottomNav() {
-  return BottomNavigationBar(
-    currentIndex: _currentIndex,
-    backgroundColor: const Color(0xFF0B1A33),
-    selectedItemColor: Colors.purple,
-    unselectedItemColor: Colors.white54,
-    type: BottomNavigationBarType.fixed,
-
-    /// 🔥 NAVIGATION LOGIC HERE
-    onTap: (index) {
-      setState(() => _currentIndex = index);
-
-      switch (index) {
-        case 0:
-          // Already on Dashboard
-          break;
-
-        case 1:
-          Navigator.pushNamed(context, '/simulation');
-          break;
-
-        case 2:
-          Navigator.pushNamed(context, '/ai');
-          break;
-
-        case 3:
-          Navigator.pushNamed(context, '/regions');
-          break;
-
-        case 4:
-          Navigator.pushNamed(context, '/settings');
-          break;
-      }
-    },
-
-    items: const [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.dashboard),
-        label: "Dashboard",
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.show_chart),
-        label: "Simulation",
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.lightbulb),
-        label: "AI Insights",
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.location_on),
-        label: "Regions",
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.settings),
-        label: "Settings",
-      ),
-    ],
-  );
-}
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap: _onNavTap,
+      backgroundColor: const Color(0xFF0B1A33),
+      selectedItemColor: Colors.purple,
+      unselectedItemColor: Colors.white54,
+      type: BottomNavigationBarType.fixed,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dashboard"),
+        BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: "Simulation"),
+        BottomNavigationBarItem(icon: Icon(Icons.lightbulb), label: "AI"),
+        BottomNavigationBarItem(icon: Icon(Icons.location_on), label: "Regions"),
+        BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
+      ],
+    );
+  }
 
   BoxDecoration _cardDecoration() {
     return BoxDecoration(

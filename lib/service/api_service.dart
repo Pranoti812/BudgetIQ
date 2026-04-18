@@ -19,43 +19,21 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
+  static const String apiKey = "579b464db66ec23bdd000001b5ef14aa898343b46abd5209a84983aa";
 
-  // 🔥 Replace with your real API URL
-  static const String regionUrl =
-      "https://mocki.io/v1/YOUR_REGION_API_ID";
-
-  /// ✅ FETCH REGION DATA (SAFE + ERROR HANDLING)
   static Future<List<dynamic>> fetchRegions() async {
-    try {
-      final response = await http.get(
-        Uri.parse(regionUrl),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      );
+    final url = Uri.parse(
+      "https://api.data.gov.in/resource/44842dc8-955c-4bf4-bb39-75219affd568?api-key=$apiKey&format=json",
+    );
 
-      // 🔍 DEBUG (optional)
-      // print(response.body);
+    final response = await http.get(url);
 
-      if (response.statusCode == 200) {
-        final decoded = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
 
-        /// ✅ CASE 1: API returns List
-        if (decoded is List) {
-          return decoded;
-        }
-
-        /// ✅ CASE 2: API returns { data: [...] }
-        if (decoded is Map && decoded['data'] != null) {
-          return decoded['data'];
-        }
-
-        throw Exception("Invalid JSON format");
-      } else {
-        throw Exception("Server error: ${response.statusCode}");
-      }
-    } catch (e) {
-      throw Exception("fetchRegions failed: $e");
+      return jsonData['records']; // 🔥 IMPORTANT
+    } else {
+      throw Exception("Failed to load data");
     }
   }
 }
