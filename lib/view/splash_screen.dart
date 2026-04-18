@@ -71,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen>
             children: [
               // 🔥 FULL LOGO IMAGE
               Image.asset(
-                'assets/budegtIQLogo.png',
+                'assets/BudgetIQ_LOGO.png',
                 width: 450,
                 fit: BoxFit.contain,
               ),
