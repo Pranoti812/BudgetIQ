@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "963191599541",
+    "project_id": "budgetiq-6c093",
+    "storage_bucket": "budgetiq-6c093.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963191599541:android:8f0936e412a27e461369fc",
+        "android_client_info": {
+          "package_name": "com.example.budegt_iq"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN7ctrjCKr7Pw2kjcWD4mGz3a2uKS2mKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

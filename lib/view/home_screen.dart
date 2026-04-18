@@ -1,6 +1,8 @@
 import 'package:budegt_iq/view/bottom_nav.dart';
-import 'package:flutter/material.dart';
+import 'package:budegt_iq/view/upload_service.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CitizenHomeScreen extends StatefulWidget {
   const CitizenHomeScreen({super.key});
@@ -11,6 +13,58 @@ class CitizenHomeScreen extends StatefulWidget {
 
 class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
   int currentIndex = 0;
+
+  bool isUploaded = false; // 🔥 ADDED
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 🔥 Upload data automatically once
+    uploadDataOnce();
+  }
+
+  Future<void> uploadDataOnce() async {
+    if (!isUploaded) {
+      isUploaded = true;
+
+      print("🚀 Uploading data...");
+      await UploadService.uploadJsonToFirebase();
+      print("✅ Upload complete");
+    }
+  }
+
+  // 🔥 FETCH DATA FROM FIREBASE (UNCHANGED)
+  Future<Map<String, dynamic>> getBudgetData() async {
+    var snapshot =
+        await FirebaseFirestore.instance.collection('gva_data').get();
+
+    Map<String, double> sectorTotals = {};
+    double total = 0;
+
+    for (var doc in snapshot.docs) {
+      String sector = doc['industry'] ?? "Other";
+      double value =
+          double.tryParse(doc['current_price'].toString()) ?? 0;
+
+      sectorTotals[sector] = (sectorTotals[sector] ?? 0) + value;
+      total += value;
+    }
+
+    Map<String, double> percentages = {};
+    sectorTotals.forEach((key, value) {
+      percentages[key] = (value / total) * 100;
+    });
+
+    var sortedKeys = sectorTotals.keys.toList()
+      ..sort((a, b) => sectorTotals[b]!.compareTo(sectorTotals[a]!));
+
+    return {
+      "percentages": percentages,
+      "totals": sectorTotals,
+      "keys": sortedKeys,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,115 +164,158 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                     ),
                     const SizedBox(height: 30),
 
-                    SizedBox(
-                      height: 280,
-                      child: PieChart(
-                        PieChartData(
-                          centerSpaceRadius: 65,
-                          sectionsSpace: 7,
-                          sections: [
-                            PieChartSectionData(
-                              value: 35,
-                              color: const Color(0xff18b9ab),
-                              radius: 48,
-                              showTitle: false,
+                    /// PIE CHART
+                    FutureBuilder(
+                      future: getBudgetData(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+
+                        var data = snapshot.data as Map<String, dynamic>;
+                        Map<String, double> percentages =
+                            data['percentages'];
+                        List keys = data['keys'];
+
+                        final colors = [
+                          Color(0xff18b9ab),
+                          Color(0xff17c455),
+                          Color(0xff2f77f6),
+                          Color(0xff9b52f2),
+                        ];
+
+                        int count = keys.length > 4 ? 4 : keys.length;
+
+                        return SizedBox(
+                          height: 280,
+                          child: PieChart(
+                            PieChartData(
+                              centerSpaceRadius: 65,
+                              sectionsSpace: 7,
+                              sections: List.generate(count, (index) {
+                                return PieChartSectionData(
+                                  value: percentages[keys[index]]!,
+                                  color: colors[index],
+                                  radius: 48,
+                                  showTitle: false,
+                                );
+                              }),
                             ),
-                            PieChartSectionData(
-                              value: 30,
-                              color: const Color(0xff17c455),
-                              radius: 48,
-                              showTitle: false,
-                            ),
-                            PieChartSectionData(
-                              value: 25,
-                              color: const Color(0xff2f77f6),
-                              radius: 48,
-                              showTitle: false,
-                            ),
-                            PieChartSectionData(
-                              value: 10,
-                              color: const Color(0xff9b52f2),
-                              radius: 48,
-                              showTitle: false,
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 20),
 
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        LegendTile(
-                          color: Color(0xff18b9ab),
-                          text: "Healthcare: 35%",
-                        ),
-                        LegendTile(
-                          color: Color(0xff17c455),
-                          text: "Education: 30%",
-                        ),
-                      ],
-                    ),
+                    /// LEGEND
+                    FutureBuilder(
+                      future: getBudgetData(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return SizedBox();
 
-                    const SizedBox(height: 14),
+                        var data = snapshot.data as Map<String, dynamic>;
+                        Map<String, double> percentages =
+                            data['percentages'];
+                        List keys = data['keys'];
 
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        LegendTile(
-                          color: Color(0xff2f77f6),
-                          text: "Infrastructure: 25%",
-                        ),
-                        LegendTile(
-                          color: Color(0xff9b52f2),
-                          text: "Others: 10%",
-                        ),
-                      ],
+                        final colors = [
+                          Color(0xff18b9ab),
+                          Color(0xff17c455),
+                          Color(0xff2f77f6),
+                          Color(0xff9b52f2),
+                        ];
+
+                        int count = keys.length > 4 ? 4 : keys.length;
+
+                        return Column(
+                          children: List.generate(
+                            (count / 2).ceil(),
+                            (rowIndex) {
+                              int i = rowIndex * 2;
+
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 14),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    if (i < count)
+                                      LegendTile(
+                                        color: colors[i],
+                                        text:
+                                            "${keys[i]}: ${percentages[keys[i]]!.toStringAsFixed(1)}%",
+                                      ),
+                                    if (i + 1 < count)
+                                      LegendTile(
+                                        color: colors[i + 1],
+                                        text:
+                                            "${keys[i + 1]}: ${percentages[keys[i + 1]]!.toStringAsFixed(1)}%",
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
+                    
                   ],
                 ),
               ),
 
               const SizedBox(height: 28),
 
-              /// SMALL CARDS
-              const Row(
-                children: [
-                  Expanded(
-                    child: BudgetCard(
-                      icon: Icons.favorite_border,
-                      iconColor: Color(0xff12b8aa),
-                      title: "Healthcare",
-                      amount: "₹2.5T",
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: BudgetCard(
-                      icon: Icons.school_outlined,
-                      iconColor: Color(0xff18c54e),
-                      title: "Education",
-                      amount: "₹2.1T",
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: BudgetCard(
-                      icon: Icons.apartment_outlined,
-                      iconColor: Color(0xff2f77f6),
-                      title: "Infra",
-                      amount: "₹1.8T",
-                    ),
-                  ),
-                ],
+              /// BUDGET CARDS
+              FutureBuilder(
+                future: getBudgetData(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return SizedBox();
+
+                  var data = snapshot.data as Map<String, dynamic>;
+                  Map<String, double> totals = data['totals'];
+                  List keys = data['keys'];
+
+                  int count = keys.length > 3 ? 3 : keys.length;
+
+                  final icons = [
+                    Icons.favorite_border,
+                    Icons.school_outlined,
+                    Icons.apartment_outlined,
+                  ];
+
+                  final colors = [
+                    Color(0xff12b8aa),
+                    Color(0xff18c54e),
+                    Color(0xff2f77f6),
+                  ];
+
+                  return Row(
+                    children: List.generate(count, (index) {
+                      return Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              right: index != count - 1 ? 16 : 0),
+                          child: BudgetCard(
+                            icon: icons[index],
+                            iconColor: colors[index],
+                            title: keys[index],
+                            amount:
+                                "₹${totals[keys[index]]!.toStringAsFixed(0)}",
+                          ),
+                        ),
+                      );
+                    }),
+                  );
+                },
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
 
-              /// GREEN BUTTON
-              Container(
+                Container(
                 height: 68,
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -285,7 +382,6 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
         ),
       ),
 
-      /// REUSABLE NAV BAR
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: currentIndex,
         onTap: (index) {
@@ -298,6 +394,7 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
   }
 }
 
+// 🔹 LEGEND TILE (REQUIRED)
 class LegendTile extends StatelessWidget {
   final Color color;
   final String text;
@@ -310,25 +407,34 @@ class LegendTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          height: 14,
-          width: 14,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
+    return Container(   // 🔥 WRAP WITH CONTAINER
+      constraints: BoxConstraints(maxWidth: 140), // 🔥 LIMIT WIDTH
+      child: Row(
+        mainAxisSize: MainAxisSize.min, // 🔥 IMPORTANT
+        children: [
+          Container(
+            height: 14,
+            width: 14,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: const TextStyle(fontSize: 18),
-        ),
-      ],
+          const SizedBox(width: 6),
+          Expanded(   // 🔥 keep Expanded here
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
+// 🔹 BUDGET CARD (REQUIRED)
 
 class BudgetCard extends StatelessWidget {
   final IconData icon;
@@ -348,6 +454,7 @@ class BudgetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 165,
+      padding: const EdgeInsets.all(10), // 🔥 added padding
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -362,21 +469,37 @@ class BudgetCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: iconColor, size: 48),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              color: Colors.black54,
+          Icon(icon, color: iconColor, size: 40),
+
+          const SizedBox(height: 10),
+
+          // 🔥 FIX: Title flexible
+          Flexible(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+
           const SizedBox(height: 6),
-          Text(
-            amount,
-            style: const TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
+
+          // 🔥 FIX: Amount flexible
+          Flexible(
+            child: Text(
+              amount,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

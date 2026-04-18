@@ -1,7 +1,7 @@
 
 import 'package:budegt_iq/model/auth_model.dart';
 import 'package:budegt_iq/view/customsnackbar.dart';
-import 'package:budegt_iq/view/homescreen.dart';
+import 'package:budegt_iq/view/home_screen.dart';
 import 'package:budegt_iq/view/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +14,7 @@ class AuthController {
       CustomSnackbar().showCustomSnackbar(context, 'Login Successfully',bgColor: Colors.green);
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context){
-          return HomeScreen();
+          return CitizenHomeScreen();
         })
       );
       // Navigator.pushReplacementNamed(context, '/home');
