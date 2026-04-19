@@ -58,9 +58,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
       break;
 
-    case 2:
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const CompareRegionsPage()));
-      break;
+    // case 2:
+    //   Navigator.push(context, MaterialPageRoute(builder: (_) => const CompareRegionsPage()));
+    //   break;
 
     case 3:
       Navigator.push(context, MaterialPageRoute(builder: (_) => const RegionScreen()));
