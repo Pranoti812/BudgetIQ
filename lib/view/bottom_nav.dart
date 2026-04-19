@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -25,7 +24,7 @@ class CustomBottomNavBar extends StatelessWidget {
       "Home",
       "Regions",
       "Compare",
-      "Survey",
+      "AI Chat",
       "Profile",
     ];
 
@@ -60,9 +59,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 Icon(
                   navIcons[index],
                   size: 30,
-                  color: isSelected
-                      ? const Color(0xff14b8b0)
-                      : Colors.black45,
+                  color: isSelected ? const Color(0xff14b8b0) : Colors.black45,
                 ),
                 const SizedBox(height: 5),
                 Text(
@@ -70,9 +67,8 @@ class CustomBottomNavBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? const Color(0xff14b8b0)
-                        : Colors.black45,
+                    color:
+                        isSelected ? const Color(0xff14b8b0) : Colors.black45,
                   ),
                 ),
               ],

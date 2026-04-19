@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       // ✅ Start with splash (recommended)
-      home: CitizenHomeScreen(),
+      home: SplashScreen(),
 
       // ✅ Named routes (optional but good)
       // routes: {'/home': (context) => const CitizenHomeScreen()},

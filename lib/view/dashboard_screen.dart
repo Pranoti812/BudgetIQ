@@ -1,3 +1,4 @@
+import 'package:budegt_iq/view/compare.dart';
 import 'package:budegt_iq/view/set_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -20,8 +21,10 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentIndex = 0;
 
-  final Stream<DocumentSnapshot> budgetStream =
-      FirebaseFirestore.instance.collection('budget').doc('current').snapshots();
+  final Stream<DocumentSnapshot> budgetStream = FirebaseFirestore.instance
+      .collection('budget')
+      .doc('current')
+      .snapshots();
 
   double totalBudget = 0;
   double efficiency = 0;
@@ -46,30 +49,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
   /// ✅ FIXED NAVIGATION (NO ROUTES NEEDED)
   void _onNavTap(int index) {
     setState(() => _currentIndex = index);
-  switch (index) {
-    case 0:
-      return;
+    switch (index) {
+      case 0:
+        return;
 
-    case 1:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const SimulationScreen()),
-      );
-      break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SimulationScreen()),
+        );
+        break;
 
-    case 2:
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const AIScreen()));
-      break;
+      // case 2:
+      //   Navigator.push(context,
+      //       MaterialPageRoute(builder: (_) => const CompareRegionsPage()));
+      //   break;
 
-    case 3:
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const RegionScreen()));
-      break;
+      case 3:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const RegionScreen()));
+        break;
 
-    case 4:
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
-      break;
+      case 4:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
+        break;
+    }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +129,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Government Dashboard",
-            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold)),
         SizedBox(height: 6),
         Text("AI-powered budget optimization & governance",
             style: TextStyle(color: Colors.white70)),
@@ -139,9 +149,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       mainAxisSpacing: 12,
       childAspectRatio: 1.2,
       children: [
-        _statCard("Total Budget", "₹${totalBudget.toStringAsFixed(1)}T", Icons.attach_money, Colors.purple),
-        _statCard("Efficiency", "$efficiency%", Icons.trending_up, Colors.green),
-        _statCard("Population", "${population.toStringAsFixed(1)}B", Icons.people, Colors.blue),
+        _statCard("Total Budget", "₹${totalBudget.toStringAsFixed(1)}T",
+            Icons.attach_money, Colors.purple),
+        _statCard(
+            "Efficiency", "$efficiency%", Icons.trending_up, Colors.green),
+        _statCard("Population", "${population.toStringAsFixed(1)}B",
+            Icons.people, Colors.blue),
         _statCard("Alerts", "$alerts", Icons.warning, Colors.orange),
       ],
     );
@@ -151,9 +164,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return GestureDetector(
       onTap: () {
         if (title.contains("Alerts")) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const AIScreen()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => const AIScreen()));
         } else if (title.contains("Population")) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const RegionScreen()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => const RegionScreen()));
         }
       },
       child: Container(
@@ -164,7 +179,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Icon(icon, color: color),
             const Spacer(),
-            Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            Text(value,
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
             Text(title, style: const TextStyle(color: Colors.white70)),
           ],
         ),
@@ -175,7 +192,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildAllocationCard() {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const RegionScreen()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const RegionScreen()));
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -183,7 +201,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Current Allocation", style: TextStyle(color: Colors.white)),
+            const Text("Current Allocation",
+                style: TextStyle(color: Colors.white)),
             const SizedBox(height: 20),
             SizedBox(
               height: 180,
@@ -192,7 +211,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   sections: List.generate(allocation.length, (i) {
                     return PieChartSectionData(
                       value: allocation[i],
-                      color: [Colors.blue, Colors.teal, Colors.orange, Colors.purple][i],
+                      color: [
+                        Colors.blue,
+                        Colors.teal,
+                        Colors.orange,
+                        Colors.purple
+                      ][i],
                     );
                   }),
                 ),
@@ -218,9 +242,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return GestureDetector(
       onTap: () {
         if (text.contains("Simulation")) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const SimulationScreen()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const SimulationScreen()));
         } else {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const AIScreen()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => const AIScreen()));
         }
       },
       child: Container(
@@ -233,7 +259,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         child: Center(
           child: Text(text,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
         ),
       ),
     );
@@ -248,10 +275,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       unselectedItemColor: Colors.white54,
       type: BottomNavigationBarType.fixed,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dashboard"),
-        BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: "Simulation"),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard), label: "Dashboard"),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart), label: "Simulation"),
         BottomNavigationBarItem(icon: Icon(Icons.lightbulb), label: "AI"),
-        BottomNavigationBarItem(icon: Icon(Icons.location_on), label: "Regions"),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.location_on), label: "Regions"),
         BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
       ],
     );

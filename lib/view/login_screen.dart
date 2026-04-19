@@ -1,6 +1,7 @@
 import 'package:budegt_iq/controller/auth_controller.dart';
 import 'package:budegt_iq/controller/user_controller.dart';
 import 'package:budegt_iq/view/customsnackbar.dart';
+import 'package:budegt_iq/view/dashboard_screen.dart';
 import 'package:budegt_iq/view/forgot_password_screen.dart';
 import 'package:budegt_iq/view/home_screen.dart';
 import 'package:budegt_iq/view/register_screen.dart';
@@ -81,9 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 'Citizen',
                                 style: GoogleFonts.poppins(
-                                  color: isLogin
-                                      ? Colors.white
-                                      : Colors.black54,
+                                  color:
+                                      isLogin ? Colors.white : Colors.black54,
                                 ),
                               ),
                             ),
@@ -96,9 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 'Government',
                                 style: GoogleFonts.poppins(
-                                  color: !isLogin
-                                      ? Colors.white
-                                      : Colors.black54,
+                                  color:
+                                      !isLogin ? Colors.white : Colors.black54,
                                 ),
                               ),
                             ),
@@ -268,73 +267,76 @@ class _LoginScreenState extends State<LoginScreen> {
                     // },
 
                     onTap: () async {
-  if (emailController.text.trim().isEmpty ||
-      passwordController.text.trim().isEmpty) {
-    CustomSnackbar().showCustomSnackbar(
-      context,
-      'Enter valid data',
-      bgColor: Colors.red,
-    );
-    return;
-  }
+                      if (emailController.text.trim().isEmpty ||
+                          passwordController.text.trim().isEmpty) {
+                        CustomSnackbar().showCustomSnackbar(
+                          context,
+                          'Enter valid data',
+                          bgColor: Colors.red,
+                        );
+                        return;
+                      }
 
-  setState(() => isLoading = true);
+                      setState(() => isLoading = true);
 
-  // 🏛️ GOVERNMENT LOGIN
-  if (!isLogin) {
-    if (emailController.text.trim() == "admin@gov.in" &&
-        passwordController.text.trim() == "123456") {
-      setState(() => isLoading = false);
+                      // 🏛️ GOVERNMENT LOGIN
+                      if (!isLogin) {
+                        if (emailController.text.trim() == "admin@gov.in" &&
+                            passwordController.text.trim() == "123456") {
+                          setState(() => isLoading = false);
 
-      CustomSnackbar().showCustomSnackbar(
-        context,
-        'Government Login Successful',
-        bgColor: Colors.green,
-      );
+                          CustomSnackbar().showCustomSnackbar(
+                            context,
+                            'Government Login Successful',
+                            bgColor: Colors.green,
+                          );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => CitizenHomeScreen()), // change to admin screen later
-      );
-    } else {
-      setState(() => isLoading = false);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    DashboardScreen()), // change to admin screen later
+                          );
+                        } else {
+                          setState(() => isLoading = false);
 
-      CustomSnackbar().showCustomSnackbar(
-        context,
-        'Invalid Government Credentials',
-        bgColor: Colors.red,
-      );
-    }
-    return;
-  }
+                          CustomSnackbar().showCustomSnackbar(
+                            context,
+                            'Invalid Government Credentials',
+                            bgColor: Colors.red,
+                          );
+                        }
+                        return;
+                      }
 
-  // 👤 CITIZEN LOGIN (Firebase)
-  bool success = await authController.login(
-    emailController.text.trim(),
-    passwordController.text.trim(),
-  );
+                      // 👤 CITIZEN LOGIN (Firebase)
+                      bool success = await authController.login(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
 
-  setState(() => isLoading = false);
+                      setState(() => isLoading = false);
 
-  if (success) {
-    CustomSnackbar().showCustomSnackbar(
-      context,
-      'Login Successful',
-      bgColor: Colors.green,
-    );
+                      if (success) {
+                        CustomSnackbar().showCustomSnackbar(
+                          context,
+                          'Login Successful',
+                          bgColor: Colors.green,
+                        );
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => CitizenHomeScreen()),
-    );
-  } else {
-    CustomSnackbar().showCustomSnackbar(
-      context,
-      'Invalid Email or Password',
-      bgColor: Colors.red,
-    );
-  }
-},
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => CitizenHomeScreen()),
+                        );
+                      } else {
+                        CustomSnackbar().showCustomSnackbar(
+                          context,
+                          'Invalid Email or Password',
+                          bgColor: Colors.red,
+                        );
+                      }
+                    },
                     child: isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
@@ -347,7 +349,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height:8),
+              SizedBox(height: 8),
               const SizedBox(height: 15),
 
               GestureDetector(

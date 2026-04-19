@@ -3064,6 +3064,7 @@
 import 'package:budegt_iq/controller/home_controller.dart';
 import 'package:budegt_iq/view/AI_assistant/voice_assistant.dart';
 import 'package:budegt_iq/view/bottom_nav.dart';
+import 'package:budegt_iq/view/survey_screen.dart';
 import 'package:budegt_iq/view/upload_service.dart';
 import 'package:budegt_iq/view/region.dart';
 import 'package:budegt_iq/view/compare.dart';
@@ -3103,9 +3104,8 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
   }
 
   Future<Map<String, dynamic>> getBudgetData() async {
-    var snapshot = await FirebaseFirestore.instance
-        .collection('gva_data')
-        .get();
+    var snapshot =
+        await FirebaseFirestore.instance.collection('gva_data').get();
 
     Map<String, double> sectorTotals = {};
     double total = 0;
@@ -3250,7 +3250,6 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                         size: 34,
                         color: Color(0xff00b8a9),
                       ),
-
                       Positioned(
                         right: 0,
                         top: 0,
@@ -3465,9 +3464,18 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
 
               const SizedBox(height: 18),
 
-              /// 🔥 WHITE BUTTON — Ask AI Assistant (now navigates!)
+              const SizedBox(height: 18),
+
+              /// WHITE BUTTON — Survey Form
               GestureDetector(
-                onTap: _navigateToAIAssistant,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SurveyScreen(),
+                    ),
+                  );
+                },
                 child: Container(
                   height: 68,
                   width: double.infinity,
@@ -3502,6 +3510,8 @@ class _CitizenHomeScreenState extends State<CitizenHomeScreen> {
                   ),
                 ),
               ),
+
+              //const SizedBox(height: 20),
 
               const SizedBox(height: 20),
             ],

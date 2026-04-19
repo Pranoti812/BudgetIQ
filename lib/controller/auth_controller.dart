@@ -1,4 +1,3 @@
-
 import 'package:budegt_iq/model/auth_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -32,7 +31,7 @@ class AuthController {
       return false;
     }
   }
-  
+
   Future<User?> signInWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -40,8 +39,7 @@ class AuthController {
       // 🔥 THIS LINE IS IMPORTANT
       await googleSignIn.signOut(); // forces account selection every time
 
-      final GoogleSignInAccount? googleUser =
-          await googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) return null;
 
