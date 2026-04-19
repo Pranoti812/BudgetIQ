@@ -1,13 +1,6 @@
 import 'package:budegt_iq/view/dashboard_screen.dart';
-import 'package:budegt_iq/view/gov_bottm_nav.dart';
-import 'package:budegt_iq/view/region.dart';
-import 'package:budegt_iq/view/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-
-// 🔥 IMPORT SCREENS
-import 'dashboard_screen.dart';
-import 'region_screen.dart';
 
 class SimulationScreen extends StatefulWidget {
   const SimulationScreen({super.key});
@@ -17,8 +10,6 @@ class SimulationScreen extends StatefulWidget {
 }
 
 class _SimulationScreenState extends State<SimulationScreen> {
-  int currentIndex = 1;
-
   double healthcare = 40;
   double defense = 40;
   double agriculture = 40;
@@ -32,7 +23,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
     generateProjection();
   }
 
-  /// 🔥 SIMULATION LOGIC
+  /// 🔥 LOGIC (UNCHANGED)
   void generateProjection() {
     List<FlSpot> growth = [];
     List<FlSpot> satisfaction = [];
@@ -65,48 +56,6 @@ class _SimulationScreenState extends State<SimulationScreen> {
     });
   }
 
-  /// 🔁 NAVIGATION
-void _onNavTap(int index) {
-  if (index == currentIndex) return; // prevent reload
-
-  switch (index) {
-    case 0:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const DashboardScreen()),
-      );
-      break;
-
-    case 1:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const SimulationScreen()),
-      );
-      break;
-
-    // case 2:
-    //   Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(builder: (_) => const AIInsightsScreen()),
-    //   );
-    //   break;
-
-    case 3:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MyApp()),
-      );
-      break;
-
-    case 4:
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const DataIntegrationScreen()),
-      );
-      break;
-  }
-}
-
   void updateValue(VoidCallback update) {
     setState(update);
     generateProjection();
@@ -115,11 +64,7 @@ void _onNavTap(int index) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9F7),
-      bottomNavigationBar: CustomBottomNav(
-        currentIndex: currentIndex,
-        onTap: _onNavTap,
-      ),
+      backgroundColor: const Color(0xFF0B1A33),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -129,14 +74,22 @@ void _onNavTap(int index) {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const DashboardScreen()),
+                      );
+                    },
                   ),
                   const SizedBox(width: 10),
                   const Text(
                     "Scenario Simulation",
-                    style:
-                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ],
               ),
@@ -170,9 +123,9 @@ void _onNavTap(int index) {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _legendItem(Colors.green, "Growth"),
+                        _legendItem(Colors.purple, "Growth"),
                         const SizedBox(width: 16),
-                        _legendItem(Colors.lightGreen, "Satisfaction"),
+                        _legendItem(Colors.blue, "Satisfaction"),
                       ],
                     )
                   ],
@@ -186,10 +139,10 @@ void _onNavTap(int index) {
                 "Trade-offs Analysis",
                 Column(
                   children: [
-                    _infoTile("Economic Impact", "+GDP growth", Colors.green),
+                    _infoTile("Economic Impact", "+GDP growth"),
                     const SizedBox(height: 12),
                     _infoTile("Social Welfare",
-                        "Healthcare improves life expectancy", Colors.green),
+                        "Healthcare improves life expectancy"),
                   ],
                 ),
               ),
@@ -200,18 +153,31 @@ void _onNavTap(int index) {
     );
   }
 
+  /// 🔥 SLIDER
   Widget _slider(String label, double value, Function(double) onChanged) {
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text(label), Text("${value.toInt()}%")],
+          children: [
+            Text(label,
+                style: const TextStyle(color: Colors.white70)),
+            Text("${value.toInt()}%",
+                style: const TextStyle(color: Colors.white)),
+          ],
         ),
-        Slider(value: value, min: 0, max: 100, onChanged: onChanged),
+        Slider(
+          value: value,
+          min: 0,
+          max: 100,
+          activeColor: Colors.purple,
+          onChanged: onChanged,
+        ),
       ],
     );
   }
 
+  /// 🔥 UPDATED CHART (FIXED AXIS)
   Widget _buildChart() {
     return SizedBox(
       height: 220,
@@ -219,9 +185,69 @@ void _onNavTap(int index) {
         LineChartData(
           minX: 2024,
           maxX: 2028,
+          minY: 60,
+          maxY: 130,
+
+          gridData: FlGridData(
+            show: true,
+            getDrawingHorizontalLine: (value) => FlLine(
+              color: Colors.white12,
+              strokeWidth: 1,
+            ),
+          ),
+
+          borderData: FlBorderData(show: false),
+
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 1,
+                getTitlesWidget: (value, meta) => Text(
+                  value.toInt().toString(),
+                  style: const TextStyle(
+                      color: Colors.white70, fontSize: 10),
+                ),
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 10,
+                getTitlesWidget: (value, meta) => Text(
+                  value.toInt().toString(),
+                  style: const TextStyle(
+                      color: Colors.white70, fontSize: 10),
+                ),
+              ),
+            ),
+            rightTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
+          ),
+
           lineBarsData: [
-            LineChartBarData(spots: growthSpots, isCurved: true),
-            LineChartBarData(spots: satisfactionSpots, isCurved: true),
+            LineChartBarData(
+              spots: growthSpots,
+              isCurved: true,
+              color: Colors.purple,
+              dotData: FlDotData(show: false),
+              belowBarData: BarAreaData(
+                show: true,
+                color: Colors.purple.withOpacity(0.2),
+              ),
+            ),
+            LineChartBarData(
+              spots: satisfactionSpots,
+              isCurved: true,
+              color: Colors.blue,
+              dotData: FlDotData(show: false),
+              belowBarData: BarAreaData(
+                show: true,
+                color: Colors.blue.withOpacity(0.2),
+              ),
+            ),
           ],
         ),
       ),
@@ -233,7 +259,8 @@ void _onNavTap(int index) {
       children: [
         Container(width: 10, height: 10, color: color),
         const SizedBox(width: 6),
-        Text(text),
+        Text(text,
+            style: const TextStyle(color: Colors.white70)),
       ],
     );
   }
@@ -241,26 +268,39 @@ void _onNavTap(int index) {
   Widget _card(String title, Widget child) {
     return Container(
       padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        color: const Color(0xFF1C2A44),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Text(title), const SizedBox(height: 10), child],
+        children: [
+          Text(title,
+              style: const TextStyle(color: Colors.white)),
+          const SizedBox(height: 12),
+          child
+        ],
       ),
     );
   }
 
-  Widget _infoTile(String t, String s, Color c) {
+  Widget _infoTile(String t, String s) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration:
-          BoxDecoration(color: c, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A3A5A),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Text(t), Text(s)],
+        children: [
+          Text(t,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold)),
+          Text(s,
+              style: const TextStyle(color: Colors.white70)),
+        ],
       ),
     );
   }

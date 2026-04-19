@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:budegt_iq/view/gov_bottm_nav.dart';
-
+import 'dashboard_screen.dart';
 
 class DataSource {
   String name;
@@ -27,8 +26,6 @@ class DataIntegrationScreen extends StatefulWidget {
 }
 
 class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
-  int currentIndex = 4;
-
   List<DataSource> sources = [
     DataSource(
       name: "Census Data",
@@ -38,29 +35,7 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
     ),
   ];
 
-  /// 🔁 NAVIGATION
-  void _onNavTap(int index) {
-    setState(() => currentIndex = index);
-
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, '/dashboard');
-        break;
-      case 1:
-        Navigator.pushReplacementNamed(context, '/simulation');
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, '/ai');
-        break;
-      case 3:
-        Navigator.pushReplacementNamed(context, '/regions');
-        break;
-      case 4:
-        break;
-    }
-  }
-
-  /// ➕ OPEN BOTTOM SHEET
+  /// ➕ ADD SOURCE (UNCHANGED LOGIC)
   void _openAddBottomSheet() {
     TextEditingController nameController = TextEditingController();
     TextEditingController descController = TextEditingController();
@@ -68,6 +43,7 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
 
     showModalBottomSheet(
       context: context,
+      backgroundColor: const Color(0xFF1C2A44),
       isScrollControlled: true,
       builder: (context) {
         return StatefulBuilder(
@@ -83,35 +59,21 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text("Add Data Source",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
 
                   const SizedBox(height: 16),
 
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: "Name",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextField(
-                    controller: descController,
-                    decoration: const InputDecoration(
-                      labelText: "Description",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
+                  _inputField("Name", nameController),
+                  _inputField("Description", descController),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Active"),
+                      const Text("Active",
+                          style: TextStyle(color: Colors.white)),
                       Switch(
                         value: isActive,
                         onChanged: (val) {
@@ -125,7 +87,7 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
 
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Colors.purple,
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     onPressed: () {
@@ -157,13 +119,33 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
     );
   }
 
-  /// 🔄 SYNC FUNCTION (WITH LOADING ANIMATION)
+  Widget _inputField(String label, TextEditingController controller) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A3A5A),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: TextField(
+        controller: controller,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          hintText: label,
+          hintStyle: const TextStyle(color: Colors.white54),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        ),
+      ),
+    );
+  }
+
+  /// 🔄 SYNC (UNCHANGED)
   void _syncData(int index) async {
     setState(() {
       sources[index].isLoading = true;
     });
 
-    await Future.delayed(const Duration(seconds: 2)); // simulate API
+    await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
       sources[index].isLoading = false;
@@ -174,11 +156,7 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9F7),
-      bottomNavigationBar: CustomBottomNav(
-        currentIndex: currentIndex,
-        onTap: _onNavTap,
-      ),
+      backgroundColor: const Color(0xFF0B1A33),
       body: SafeArea(
         child: Column(
           children: [
@@ -186,13 +164,25 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
-                children: const [
-                  Icon(Icons.arrow_back),
-                  SizedBox(width: 10),
-                  Text(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back,
+                        color: Colors.white),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const DashboardScreen()),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
                     "Data Integration",
-                    style:
-                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -206,30 +196,25 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
                 itemBuilder: (context, index) {
                   final source = sources[index];
 
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
+                  return Container(
                     margin: const EdgeInsets.only(bottom: 14),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: const Color(0xFF1C2A44),
                       borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                        )
-                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        /// TITLE + TOGGLE
+                        /// TITLE + SWITCH
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
                           children: [
                             Text(source.name,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
                             Switch(
                               value: source.isActive,
                               onChanged: (val) {
@@ -244,52 +229,50 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
                         const SizedBox(height: 6),
 
                         Text(source.description,
-                            style:
-                                const TextStyle(color: Colors.black54)),
+                            style: const TextStyle(
+                                color: Colors.white70)),
 
                         const SizedBox(height: 4),
 
                         Text("Last sync: ${source.lastSync}",
                             style: const TextStyle(
-                                fontSize: 12, color: Colors.black38)),
+                                fontSize: 12,
+                                color: Colors.white54)),
 
                         const SizedBox(height: 12),
 
-                        /// SYNC BUTTON / LOADING
+                        /// BUTTON
                         if (source.isActive)
                           GestureDetector(
                             onTap: source.isLoading
                                 ? null
                                 : () => _syncData(index),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
+                            child: Container(
                               width: double.infinity,
                               padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                                  const EdgeInsets.symmetric(
+                                      vertical: 12),
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   colors: [
-                                    Color(0xFF43A047),
-                                    Color(0xFF81C784)
+                                    Colors.purple,
+                                    Colors.deepPurple
                                   ],
                                 ),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius:
+                                    BorderRadius.circular(12),
                               ),
                               child: Center(
                                 child: source.isLoading
-                                    ? const SizedBox(
-                                        height: 18,
-                                        width: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
                                       )
                                     : const Text(
                                         "Sync Now",
                                         style: TextStyle(
                                             color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight:
+                                                FontWeight.bold),
                                       ),
                               ),
                             ),
@@ -307,10 +290,14 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
               child: GestureDetector(
                 onTap: _openAddBottomSheet,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF43A047), Color(0xFF81C784)],
+                      colors: [
+                        Colors.purple,
+                        Colors.deepPurple
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -318,7 +305,8 @@ class _DataIntegrationScreenState extends State<DataIntegrationScreen> {
                     child: Text(
                       "Add New Data Source",
                       style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

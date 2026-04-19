@@ -1,4 +1,5 @@
-import 'package:budegt_iq/view/set_screen.dart';
+import 'package:budegt_iq/view/AI_Insight_screen.dart';
+import 'package:budegt_iq/view/widget/AI_budget_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       break;
 
     case 2:
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const AIScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const CompareRegionsPage()));
       break;
 
     case 3:
@@ -66,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       break;
 
     case 4:
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const DataIntegrationScreen()));
       break;
   }
 }
@@ -204,40 +205,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildButtons() {
-    return Column(
-      children: [
-        _button("Run Scenario Simulation"),
-        const SizedBox(height: 12),
-        _button("Generate AI Budget"),
-      ],
-    );
-  }
-
-  Widget _button(String text) {
-    return GestureDetector(
-      onTap: () {
-        if (text.contains("Simulation")) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const SimulationScreen()));
-        } else {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const AIScreen()));
-        }
-      },
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)],
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Center(
-          child: Text(text,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        ),
+Widget _buildButtons() {
+  return Column(
+    children: [
+      _button(
+        "Run Scenario Simulation",
+        () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SimulationScreen()),
+          );
+        },
       ),
-    );
-  }
+      const SizedBox(height: 12),
+      _button(
+        "Generate AI Budget",
+        () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AiBudgetScreen()),
+          );
+        },
+      ),
+    ],
+  );
+}
+  Widget _button(String text, VoidCallback onTap) {
+  return SizedBox(
+    width: double.infinity,
+    child: ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        backgroundColor: Colors.purple,
+      ),
+      child: Text(text, style: const TextStyle(color: Colors.white)),
+    ),
+  );
+}
 
   Widget _buildBottomNav() {
     return BottomNavigationBar(
